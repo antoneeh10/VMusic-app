@@ -8,13 +8,6 @@
 
 <br/>
 
-<a href="https://www.blacksmith.sh">
-  <img src="assets/blacksmith-powered.png" alt="CI powered by Blacksmith" width="280" />
-</a>
-
-<br/>
-<br/>
-
 [![Latest release](https://img.shields.io/github/v/release/MetrolistGroup/Metrolist?style=for-the-badge&labelColor=0d1117)](https://github.com/MetrolistGroup/Metrolist/releases)
 [![License](https://img.shields.io/github/license/MetrolistGroup/metrolist?style=for-the-badge&labelColor=0d1117)](https://github.com/MetrolistGroup/Metrolist/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/MetrolistGroup/Metrolist/total?style=for-the-badge&labelColor=0d1117)](https://github.com/MetrolistGroup/Metrolist/releases)
