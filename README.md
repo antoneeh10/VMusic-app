@@ -131,8 +131,8 @@ VMusic also acknowledges the maintainers of third-party libraries, services, and
 ### VMusic contributors
 
 <!-- Replace OWNER/VMUSIC_REPO with the actual repository -->
-<a href="https://github.com/OWNER/VMUSIC_REPO/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=OWNER/VMUSIC_REPO" alt="VMusic contributors" />
+<a href="https://github.com/OWNER/VMusic-app/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=OWNER/VMusic-app" alt="VMusic contributors" />
 </a>
 
 ### Metrolist upstream contributors
