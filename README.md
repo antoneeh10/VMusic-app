@@ -111,7 +111,6 @@ From discovering your next favorite track to following every lyric, VMusic aims 
 ### 🌐 Connected Listening
 - Listen together in real time.
 - Last.fm scrobbling.
-- Discord Rich Presence.
 - Home screen widget.
 
 ### 🛠️ Built for Contributors
