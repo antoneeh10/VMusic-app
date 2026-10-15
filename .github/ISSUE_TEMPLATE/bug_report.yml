@@ -123,7 +123,7 @@ body:
     attributes:
       label: VMusic version
       description: |
-        You can find your Metrolist version in **Settings**.
+        You can find your Metrolist version in **Settings > About**.
       placeholder: |
         Example: "13.1.1"
     validations:
