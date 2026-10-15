@@ -121,7 +121,7 @@ body:
   - type: input
     id: app-version
     attributes:
-      label: Metrolist version
+      label: VMusic version
       description: |
         You can find your Metrolist version in **Settings**.
       placeholder: |
