@@ -46,9 +46,9 @@ From discovering your next favorite track to following every lyric, VMusic aims 
 </div>
 
 <div align="center">
-  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_1.png" alt="VMusic home screen" width="30%" />
-  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_2.png" alt="VMusic artist screen" width="30%" />
-  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_3.png" alt="VMusic music recognition screen" width="30%" />
+  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_1.png" alt="VMusic player screen" width="30%" />
+  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_2.png" alt="VMusic lyrics screen" width="30%" />
+  <img src="fastlane/metadata/android/en-US/images/screenshots/screenshot_3.png" alt="VMusic home screen" width="30%" />
 </div>
 
 ---
