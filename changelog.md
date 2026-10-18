@@ -1,6 +1,5 @@
 # Changelog
 
-<<<<<<< HEAD
 ## [v1.1.0] - 2026-10-18
 >>>>>>> 142e030 (feat: add Spotify Canvas and experimental Spatial Sound)
 
