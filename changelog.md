@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.1.0] - Unreleased
+
+### Added
+- **player:** add Spotify Canvas backgrounds for a more immersive playback experience.
+- **audio:** introduce experimental Spatial Sound support. Use with caution, as this feature is experimental.
+
+### Changed
+- **artist:** redesign the Artist Page with an updated user interface.
+
+### Fixed
+- **player:** fix an issue where song cover artwork failed to appear.
+
 ## [v1.0.0] - 2026-10-15
 
 ### Added
