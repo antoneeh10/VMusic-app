@@ -23,6 +23,9 @@ A community-driven YouTube Music client for Android, built around a refined list
 > [!WARNING]
 > **Regional Availability:** VMusic relies on YouTube Music services. Some features and content may be unavailable depending on your region, account, or Google's service restrictions.
 
+> [!NOTE]
+> VMusic is an independently maintained music player project based on Metrolist. It is not a continuation of the original ViMusic project.
+
 ## About VMusic
 
 **VMusic is a music player for Android designed to make listening feel more personal.**
@@ -222,6 +225,8 @@ Check the repository for contribution guidelines and open issues before submitti
 <div align="center">
 
 <h2 id="disclaimer">Disclaimer</h2>
+
+VMusic is an independently maintained music player project based on Metrolist. It is not a continuation of the original ViMusic project.
 
 VMusic is an independent, community-driven project. It is not affiliated with, sponsored by, authorized by, or endorsed by YouTube, YouTube Music, Google LLC, or their affiliates.
 
