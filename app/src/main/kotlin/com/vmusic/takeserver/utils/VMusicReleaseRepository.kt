@@ -71,9 +71,10 @@ object VMusicReleaseRepository {
                         !release.draft && !release.prerelease && release.tagName.matches(versionRegex)
                     } ?: throw Exception("No stable semantic version release found")
 
+                    val cleanVersion = Updater.extractVersionNumber(stableRelease.tag_name)
                     val releaseInfo = ReleaseInfo(
                         tagName = stableRelease.tag_name,
-                        versionName = if (stableRelease.name.isNotEmpty()) stableRelease.name else stableRelease.tag_name,
+                        versionName = cleanVersion,
                         description = stableRelease.body,
                         releaseDate = stableRelease.published_at,
                         assets = Updater.parseAssets(stableRelease.assets)

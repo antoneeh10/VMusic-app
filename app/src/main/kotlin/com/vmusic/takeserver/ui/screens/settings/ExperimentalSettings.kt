@@ -5,9 +5,12 @@
 
 package com.vmusic.takeserver.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
@@ -18,6 +21,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,20 +31,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.vmusic.takeserver.LocalPlayerAwareWindowInsets
 import com.vmusic.takeserver.R
 import com.vmusic.takeserver.constants.ExpressiveFloatingCapsuleMenuKey
+import com.vmusic.takeserver.constants.SpatialModeKey
+import com.vmusic.takeserver.constants.SpatialStrengthKey
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
 import com.vmusic.takeserver.ui.component.Material3SettingsGroup
 import com.vmusic.takeserver.ui.component.Material3SettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,12 +60,24 @@ fun ExperimentalSettings(
         key = ExpressiveFloatingCapsuleMenuKey,
         defaultValue = false
     )
+    val (spatialMode, onSpatialModeChange) = rememberPreference(
+        key = SpatialModeKey,
+        defaultValue = false
+    )
+    val (spatialStrength, onSpatialStrengthChange) = rememberPreference(
+        key = SpatialStrengthKey,
+        defaultValue = 50
+    )
 
-    var showBugWarningDialog by remember { mutableStateOf(false) }
+    var pendingToggleAction by remember { mutableStateOf<(() -> Unit)?>(null) }
+    var showConfirmationDialog by remember { mutableStateOf(false) }
 
-    if (showBugWarningDialog) {
+    if (showConfirmationDialog) {
         DefaultDialog(
-            onDismiss = { showBugWarningDialog = false },
+            onDismiss = {
+                pendingToggleAction = null
+                showConfirmationDialog = false
+            },
             title = { Text(stringResource(R.string.warning)) },
             content = {
                 Text(
@@ -66,7 +87,21 @@ fun ExperimentalSettings(
                 )
             },
             buttons = {
-                TextButton(onClick = { showBugWarningDialog = false }) {
+                TextButton(
+                    onClick = {
+                        pendingToggleAction = null
+                        showConfirmationDialog = false
+                    }
+                ) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+                TextButton(
+                    onClick = {
+                        pendingToggleAction?.invoke()
+                        pendingToggleAction = null
+                        showConfirmationDialog = false
+                    }
+                ) {
                     Text(stringResource(android.R.string.ok))
                 }
             }
@@ -100,9 +135,11 @@ fun ExperimentalSettings(
                         Switch(
                             checked = floatingMenu,
                             onCheckedChange = { enabled ->
-                                onFloatingMenuChange(enabled)
                                 if (enabled) {
-                                    showBugWarningDialog = true
+                                    pendingToggleAction = { onFloatingMenuChange(true) }
+                                    showConfirmationDialog = true
+                                } else {
+                                    onFloatingMenuChange(false)
                                 }
                             },
                             thumbContent = {
@@ -117,12 +154,80 @@ fun ExperimentalSettings(
                         )
                     },
                     onClick = {
-                        val newVal = !floatingMenu
-                        onFloatingMenuChange(newVal)
-                        if (newVal) {
-                            showBugWarningDialog = true
+                        if (!floatingMenu) {
+                            pendingToggleAction = { onFloatingMenuChange(true) }
+                            showConfirmationDialog = true
+                        } else {
+                            onFloatingMenuChange(false)
                         }
                     }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.equalizer),
+                    title = { Text(stringResource(R.string.spatial_mode)) },
+                    description = { Text(stringResource(R.string.spatial_mode_desc)) },
+                    trailingContent = {
+                        Switch(
+                            checked = spatialMode,
+                            onCheckedChange = { enabled ->
+                                if (enabled) {
+                                    pendingToggleAction = { onSpatialModeChange(true) }
+                                    showConfirmationDialog = true
+                                } else {
+                                    onSpatialModeChange(false)
+                                }
+                            },
+                            thumbContent = {
+                                Icon(
+                                    painter = painterResource(
+                                        id = if (spatialMode) R.drawable.check else R.drawable.close
+                                    ),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(androidx.compose.material3.SwitchDefaults.IconSize)
+                                )
+                            }
+                        )
+                    },
+                    onClick = {
+                        if (!spatialMode) {
+                            pendingToggleAction = { onSpatialModeChange(true) }
+                            showConfirmationDialog = true
+                        } else {
+                            onSpatialModeChange(false)
+                        }
+                    }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.linear_scale),
+                    title = {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(stringResource(R.string.spatial_strength))
+                            Text(
+                                text = "$spatialStrength%",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = if (spatialMode) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface.copy(alpha = 0.38f),
+                                fontWeight = FontWeight.Bold
+                            )
+                        }
+                    },
+                    description = {
+                        Column {
+                            Spacer(Modifier.height(8.dp))
+                            Slider(
+                                value = spatialStrength.toFloat(),
+                                enabled = spatialMode,
+                                onValueChange = { onSpatialStrengthChange(it.roundToInt()) },
+                                valueRange = 0f..100f,
+                                steps = 19
+                            )
+                        }
+                    },
+                    enabled = spatialMode,
+                    onClick = null
                 )
             )
         )

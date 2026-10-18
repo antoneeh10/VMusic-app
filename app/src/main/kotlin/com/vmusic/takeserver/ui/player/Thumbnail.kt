@@ -81,8 +81,14 @@ import com.vmusic.takeserver.constants.PlayerHorizontalPadding
 import com.vmusic.takeserver.constants.SeekExtraSeconds
 import com.vmusic.takeserver.constants.SwipeThumbnailKey
 import com.vmusic.takeserver.constants.ThumbnailCornerRadius
+import com.vmusic.takeserver.constants.SpotifyCanvasEnabledKey
+import com.vmusic.takeserver.constants.SpotifyCanvasFallbackKey
+import com.vmusic.takeserver.constants.SpotifySpDcTokenKey
+import com.vmusic.takeserver.canvas.SpotifyCanvasProvider
+import com.vmusic.takeserver.canvas.CanvasResult
 import com.vmusic.takeserver.listentogether.RoomRole
 import com.vmusic.takeserver.ui.component.CastButton
+import com.vmusic.takeserver.ui.component.CanvasPlayerView
 import com.vmusic.takeserver.utils.rememberEnumPreference
 import com.vmusic.takeserver.utils.rememberPreference
 import kotlinx.coroutines.delay
@@ -147,11 +153,11 @@ private fun getMediaItems(
     val timeline = player.currentTimeline
     val currentIndex = player.currentMediaItemIndex
     val shuffleModeEnabled = player.shuffleModeEnabled
-    
+
     val currentMediaItem = try {
         player.currentMediaItem
     } catch (e: Exception) { null }
-    
+
     val previousMediaItem = if (swipeThumbnail && !timeline.isEmpty) {
         val previousIndex = timeline.getPreviousWindowIndex(
             currentIndex,
@@ -176,7 +182,7 @@ private fun getMediaItems(
 
     val items = listOfNotNull(previousMediaItem, currentMediaItem, nextMediaItem)
     val currentMediaIndex = items.indexOf(currentMediaItem)
-    
+
     return MediaItemsData(items, currentMediaIndex)
 }
 
@@ -190,6 +196,7 @@ private fun getTextColor(playerBackground: PlayerBackgroundStyle): Color {
     return when (playerBackground) {
         PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
         PlayerBackgroundStyle.BLUR -> Color.White
+        PlayerBackgroundStyle.CANVAS -> Color.White
         PlayerBackgroundStyle.GRADIENT -> Color.White
     }
 }
@@ -202,6 +209,7 @@ fun Thumbnail(
     isPlayerExpanded: () -> Boolean = { true },
     isLandscape: Boolean = false,
     isListenTogetherGuest: Boolean = false,
+    canvasBackgroundActive: Boolean = false,
 ) {
     val playerConnection = LocalPlayerConnection.current ?: return
     val context = LocalContext.current
@@ -224,13 +232,13 @@ fun Thumbnail(
         key = PlayerBackgroundStyleKey,
         defaultValue = PlayerBackgroundStyle.BLUR
     )
-    
+
     // Pre-calculate text color based on background style
     val textBackgroundColor = getTextColor(playerBackground)
-    
+
     // Grid state
     val thumbnailLazyGridState = rememberLazyGridState()
-    
+
     // Calculate media items data - memoized
     val mediaItemsData by remember(
         playerConnection.player.currentMediaItemIndex,
@@ -242,7 +250,7 @@ fun Thumbnail(
             getMediaItems(playerConnection.player, swipeThumbnail)
         }
     }
-    
+
     val mediaItems = mediaItemsData.items
     val currentMediaIndex = mediaItemsData.currentIndex
 
@@ -341,7 +349,7 @@ fun Thumbnail(
                         textColor = textBackgroundColor
                     )
                 }
-                
+
                 // Thumbnail content
                 BoxWithConstraints(
                     contentAlignment = Alignment.Center,
@@ -367,12 +375,12 @@ fun Thumbnail(
                             showSeekEffect = showEffect
                         }
                     }
-                    
+
                     // Derive scroll enabled state to prevent unnecessary recomposition
                     val isScrollEnabled by remember(swipeThumbnail) {
                         derivedStateOf { swipeThumbnail && isPlayerExpanded() }
                     }
-                    
+
                     LazyHorizontalGrid(
                         state = thumbnailLazyGridState,
                         rows = GridCells.Fixed(1),
@@ -386,7 +394,7 @@ fun Thumbnail(
                     ) {
                         items(
                             items = mediaItems,
-                            key = { item -> 
+                            key = { item ->
                                 item.mediaId.ifEmpty { "unknown_${item.hashCode()}" }
                             }
                         ) { item ->
@@ -402,6 +410,7 @@ fun Thumbnail(
                                 context = context,
                                 isLandscape = isLandscape,
                                 isListenTogetherGuest = isListenTogetherGuest,
+                                canvasBackgroundActive = canvasBackgroundActive,
                                 currentMediaId = mediaMetadata?.id,
                                 currentMediaThumbnail = mediaMetadata?.thumbnailUrl
                             )
@@ -499,6 +508,7 @@ private fun ThumbnailItem(
     context: android.content.Context,
     isLandscape: Boolean = false,
     isListenTogetherGuest: Boolean = false,
+    canvasBackgroundActive: Boolean = false,
     currentMediaId: String? = null,
     currentMediaThumbnail: String? = null,
     modifier: Modifier = Modifier,
@@ -561,21 +571,71 @@ private fun ThumbnailItem(
                 .size(dimensions.thumbnailSize)
                 .clip(RoundedCornerShape(dimensions.cornerRadius))
         ) {
-            if (hidePlayerThumbnail) {
-                HiddenThumbnailPlaceholder(textBackgroundColor = textBackgroundColor)
-            } else {
-                val artworkUriToUse = if (item.mediaId == currentMediaId && !currentMediaThumbnail.isNullOrBlank()) {
+            // ThumbnailItem is a separate function from Thumbnail(), so read the style here too
+            val playerBackground by rememberEnumPreference(
+                key = PlayerBackgroundStyleKey,
+                defaultValue = PlayerBackgroundStyle.BLUR
+            )
+
+            val artworkUriToUse = remember(item.mediaId, currentMediaId, currentMediaThumbnail, item.mediaMetadata.artworkUri) {
+                val rawUrl = if (item.mediaId == currentMediaId && !currentMediaThumbnail.isNullOrBlank()) {
                     currentMediaThumbnail
                 } else {
                     item.mediaMetadata.artworkUri?.toString()
                 }
+                val urlToSanitize = if (!rawUrl.isNullOrBlank()) {
+                    rawUrl
+                } else if (item.mediaId.isNotBlank() && !item.mediaId.startsWith("local_")) {
+                    "https://i.ytimg.com/vi/${item.mediaId}/hqdefault.jpg"
+                } else null
 
+                urlToSanitize?.replace("/maxresdefault.jpg", "/hqdefault.jpg")
+            }
+
+            if (playerBackground == PlayerBackgroundStyle.CANVAS && canvasBackgroundActive) {
+                // Canvas video is playing as the player background (Player.kt): no cover
+                Box(Modifier.fillMaxSize())
+            } else if (hidePlayerThumbnail) {
+                HiddenThumbnailPlaceholder(textBackgroundColor = textBackgroundColor)
+            } else if (playerBackground == PlayerBackgroundStyle.CANVAS) {
+                // CANVAS style but this track has no canvas: show the cover, background stays blur
                 ThumbnailImage(
                     artworkUri = artworkUriToUse,
                     cropArtwork = cropAlbumArt
                 )
+            } else {
+                val (spotifyCanvasEnabled) = rememberPreference(SpotifyCanvasEnabledKey, false)
+                val (spotifyCanvasFallback) = rememberPreference(SpotifyCanvasFallbackKey, true)
+                val (spDcToken) = rememberPreference(SpotifySpDcTokenKey, "")
+
+                var canvasUrl by remember(item.mediaId) { mutableStateOf<String?>(null) }
+
+                LaunchedEffect(spotifyCanvasEnabled, item.mediaId, spDcToken) {
+                    if (spotifyCanvasEnabled && item.mediaId.isNotBlank()) {
+                        val provider = SpotifyCanvasProvider().apply {
+                            isEnabled = true
+                            this.spDcToken = spDcToken
+                        }
+                        val result = provider.fetchCanvas(
+                            trackIdOrIsrc = item.mediaId,
+                            title = item.mediaMetadata.title?.toString(),
+                            artist = item.mediaMetadata.artist?.toString()
+                        )
+                        canvasUrl = (result as? CanvasResult.Success)?.canvasUrl
+                    } else {
+                        canvasUrl = null
+                    }
+                }
+
+                CanvasPlayerView(
+                    canvasUrl = canvasUrl,
+                    artworkUri = artworkUriToUse,
+                    cropArtwork = cropAlbumArt,
+                    isEnabled = spotifyCanvasEnabled,
+                    fallbackEnabled = spotifyCanvasFallback
+                )
             }
-            
+
             // Cast button at top-right corner of thumbnail
             CastButton(
                 modifier = Modifier

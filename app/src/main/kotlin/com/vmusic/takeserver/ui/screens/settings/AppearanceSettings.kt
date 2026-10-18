@@ -5,6 +5,10 @@
 
 package com.vmusic.takeserver.ui.screens.settings
 
+import android.content.ClipboardManager
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -23,6 +27,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
@@ -48,6 +53,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -96,6 +102,8 @@ import com.vmusic.takeserver.constants.ShowUploadedPlaylistKey
 import com.vmusic.takeserver.constants.SliderStyle
 import com.vmusic.takeserver.constants.SliderStyleKey
 import com.vmusic.takeserver.constants.SlimNavBarKey
+import com.vmusic.takeserver.constants.SpotifyCanvasEnabledKey
+import com.vmusic.takeserver.constants.SpotifySpDcTokenKey
 import com.vmusic.takeserver.constants.SquigglySliderKey
 import com.vmusic.takeserver.constants.SwipeSensitivityKey
 import com.vmusic.takeserver.constants.SwipeThumbnailKey
@@ -188,6 +196,13 @@ fun AppearanceSettings(
             HidePlayerThumbnailKey,
             defaultValue = false,
         )
+    val (spotifyCanvasEnabled, onSpotifyCanvasEnabledChange) =
+        rememberPreference(
+            SpotifyCanvasEnabledKey,
+            defaultValue = false,
+        )
+    val (spDcToken, onSpDcTokenChange) = rememberPreference(SpotifySpDcTokenKey, "")
+    var showSpDcDialog by rememberSaveable { mutableStateOf(false) }
     val (cropAlbumArt, onCropAlbumArtChange) =
         rememberPreference(
             CropAlbumArtKey,
@@ -595,6 +610,7 @@ fun AppearanceSettings(
             onDismiss = { showPlayerBackgroundDialog = false },
             onSelect = {
                 onPlayerBackgroundChange(it)
+                if (it == PlayerBackgroundStyle.CANVAS) onSpotifyCanvasEnabledChange(true)
                 showPlayerBackgroundDialog = false
             },
             title = stringResource(R.string.player_background_style),
@@ -605,6 +621,7 @@ fun AppearanceSettings(
                     PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
                     PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
                     PlayerBackgroundStyle.BLUR -> stringResource(R.string.player_background_blur)
+                    PlayerBackgroundStyle.CANVAS -> "Canvas (video Spotify)"
                 }
             },
         )
@@ -630,6 +647,87 @@ fun AppearanceSettings(
                 }
             },
         )
+    }
+
+    if (showSpDcDialog) {
+        var tempToken by remember { mutableStateOf(spDcToken) }
+
+        DefaultDialog(
+            onDismiss = { showSpDcDialog = false },
+            title = { Text("Token Spotify (sp_dc)") },
+            buttons = {
+                TextButton(onClick = { showSpDcDialog = false }) {
+                    Text(stringResource(android.R.string.cancel))
+                }
+                TextButton(
+                    onClick = {
+                        onSpDcTokenChange(tempToken.trim())
+                        showSpDcDialog = false
+                    },
+                ) {
+                    Text(stringResource(android.R.string.ok))
+                }
+            },
+        ) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier.padding(horizontal = 18.dp),
+            ) {
+                OutlinedTextField(
+                    value = tempToken,
+                    onValueChange = { tempToken = it },
+                    label = { Text("Token sp_dc") },
+                    singleLine = true,
+                    visualTransformation = PasswordVisualTransformation(),
+                    modifier = Modifier.fillMaxWidth(),
+                )
+                TextButton(
+                    onClick = {
+                        showSpDcDialog = false
+                        navController.navigate("settings/appearance/spotify_login")
+                    },
+                ) {
+                    Text("Login di dalam app")
+                }
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    TextButton(
+                        onClick = {
+                            val clipboard = iconContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val pasted =
+                                clipboard.primaryClip
+                                    ?.getItemAt(0)
+                                    ?.text
+                                    ?.toString()
+                                    .orEmpty()
+                                    .trim()
+                            // terima token polos atau format "sp_dc=...;"
+                            tempToken = pasted.removePrefix("sp_dc=").substringBefore(";")
+                        },
+                    ) {
+                        Text("Tempel")
+                    }
+                    TextButton(
+                        onClick = {
+                            iconContext.startActivity(
+                                Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse("https://accounts.spotify.com/login?continue=https%3A%2F%2Fopen.spotify.com%2F"),
+                                ),
+                            )
+                        },
+                    ) {
+                        Text("Buka Spotify")
+                    }
+                }
+                Text(
+                    text =
+                        "Login di dalam app mengambil token otomatis. Kalau Google ditolak, pakai login email/kode, " +
+                                "atau login di browser lalu salin cookie sp_dc dan tempel di sini.",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
 
     var showDefaultOpenTabDialog by rememberSaveable {
@@ -1162,6 +1260,7 @@ fun AppearanceSettings(
                                     PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
                                     PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
                                     PlayerBackgroundStyle.BLUR -> stringResource(R.string.player_background_blur)
+                                    PlayerBackgroundStyle.CANVAS -> "Canvas (video Spotify)"
                                 },
                             )
                         },
@@ -1200,20 +1299,6 @@ fun AppearanceSettings(
                             )
                         },
                         onClick = { onUseNewPlayerDesignChange(!useNewPlayerDesign) },
-                    ),
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.gradient),
-                        title = { Text(stringResource(R.string.player_background_style)) },
-                        description = {
-                            Text(
-                                when (playerBackground) {
-                                    PlayerBackgroundStyle.DEFAULT -> stringResource(R.string.follow_theme)
-                                    PlayerBackgroundStyle.GRADIENT -> stringResource(R.string.gradient)
-                                    PlayerBackgroundStyle.BLUR -> stringResource(R.string.player_background_blur)
-                                },
-                            )
-                        },
-                        onClick = { showPlayerBackgroundDialog = true },
                     ),
                     Material3SettingsItem(
                         icon = painterResource(R.drawable.hide_image),
@@ -1323,25 +1408,25 @@ fun AppearanceSettings(
                         onClick = { onSwipeThumbnailChange(!swipeThumbnail) },
                     ),
                 ) +
-                    if (swipeThumbnail) {
-                        listOf(
-                            Material3SettingsItem(
-                                icon = painterResource(R.drawable.tune),
-                                title = { Text(stringResource(R.string.swipe_sensitivity)) },
-                                description = {
-                                    Text(
-                                        stringResource(
-                                            R.string.sensitivity_percentage,
-                                            (swipeSensitivity * 100).roundToInt(),
-                                        ),
-                                    )
-                                },
-                                onClick = { showSensitivityDialog = true },
-                            ),
-                        )
-                    } else {
-                        emptyList()
-                    },
+                        if (swipeThumbnail) {
+                            listOf(
+                                Material3SettingsItem(
+                                    icon = painterResource(R.drawable.tune),
+                                    title = { Text(stringResource(R.string.swipe_sensitivity)) },
+                                    description = {
+                                        Text(
+                                            stringResource(
+                                                R.string.sensitivity_percentage,
+                                                (swipeSensitivity * 100).roundToInt(),
+                                            ),
+                                        )
+                                    },
+                                    onClick = { showSensitivityDialog = true },
+                                ),
+                            )
+                        } else {
+                            emptyList()
+                        },
         )
 
         if (showSensitivityDialog) {
@@ -1409,6 +1494,53 @@ fun AppearanceSettings(
                     )
                 }
             }
+        }
+
+        if (playerBackground == PlayerBackgroundStyle.CANVAS) {
+            Spacer(modifier = Modifier.height(27.dp))
+
+            Material3SettingsGroup(
+                title = "Spotify Canvas",
+                items =
+                    listOf(
+                        Material3SettingsItem(
+                            icon = painterResource(R.drawable.album),
+                            title = { Text("Spotify Canvas") },
+                            description = { Text("Putar video canvas Spotify sebagai background player") },
+                            trailingContent = {
+                                Switch(
+                                    checked = spotifyCanvasEnabled,
+                                    onCheckedChange = onSpotifyCanvasEnabledChange,
+                                    thumbContent = {
+                                        Icon(
+                                            painter =
+                                                painterResource(
+                                                    id = if (spotifyCanvasEnabled) R.drawable.check else R.drawable.close,
+                                                ),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(SwitchDefaults.IconSize),
+                                        )
+                                    },
+                                )
+                            },
+                            onClick = { onSpotifyCanvasEnabledChange(!spotifyCanvasEnabled) },
+                        ),
+                        Material3SettingsItem(
+                            icon = painterResource(R.drawable.palette),
+                            title = { Text("Token Spotify (sp_dc)") },
+                            description = {
+                                Text(
+                                    if (spDcToken.isBlank()) {
+                                        "Belum diatur. Ketuk buat mengisi"
+                                    } else {
+                                        "Tersimpan. Ketuk buat ganti"
+                                    },
+                                )
+                            },
+                            onClick = { showSpDcDialog = true },
+                        ),
+                    ),
+            )
         }
 
         Spacer(modifier = Modifier.height(27.dp))

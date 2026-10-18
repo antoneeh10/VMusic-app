@@ -11,7 +11,6 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 
 val EnableHighRefreshRateKey = booleanPreferencesKey("enableHighRefreshRate")
 val EnableLandscapeScalingKey = booleanPreferencesKey("enableLandscapeScaling")
@@ -429,6 +428,7 @@ enum class PlayerBackgroundStyle {
     DEFAULT,
     GRADIENT,
     BLUR,
+    CANVAS,
 }
 
 val TopSize = stringPreferencesKey("topSize")
@@ -486,6 +486,14 @@ val LyricsLineSpacingKey = floatPreferencesKey("lyricsLineSpacing")
 val RespectAgentPositioningKey = booleanPreferencesKey("respectAgentPositioning")
 val ShowIntervalIndicatorKey = booleanPreferencesKey("showIntervalIndicator")
 val ExperimentalLyricsKey = booleanPreferencesKey("experimentalLyrics")
+val SpatialModeKey = booleanPreferencesKey("spatialMode")
+val SpatialStrengthKey = intPreferencesKey("spatialStrength")
+val SpotifyCanvasEnabledKey = booleanPreferencesKey("spotifyCanvasEnabled")
+val SpotifyCanvasFallbackKey = booleanPreferencesKey("spotifyCanvasFallback")
+val SpotifyAccountStatusKey = stringPreferencesKey("spotifyAccountStatus")
+val SpotifyCanvasDiagnosticsKey = stringPreferencesKey("spotifyCanvasDiagnostics")
+val SpotifySpDcTokenKey = stringPreferencesKey("spotifySpDcToken")
+val SpotifySpDcCookieKey = SpotifySpDcTokenKey
 
 val PlayerVolumeKey = floatPreferencesKey("playerVolume")
 val SleepTimerDefaultKey = floatPreferencesKey("sleepTimerDefault")

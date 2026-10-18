@@ -210,7 +210,7 @@
     <string name="release_notes">Buraxılış qeydləri</string>
     <string name="changelog">Dəyişikliklər siyahısı</string>
     <string name="changelog_empty">Dəyişikliklər siyahısı mövcud deyil</string>
-    <string name="github_releases_url">https://github.com/MetrolistGroup/Metrolist/releases</string>
+    <string name="github_releases_url">https://github.com/antoneeh10/VMusic-app/releases</string>
     <string name="list_bullet">•</string>
     <string name="view_on_github">GitHub-da baxın</string>
     <string name="current_version">Cari versiya</string>

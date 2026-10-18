@@ -75,7 +75,7 @@ fun SettingsScreen(
         )
 
         // Update Available Banner (above Profile tab)
-        if (BuildConfig.UPDATER_AVAILABLE && latestVersionName != BuildConfig.BASE_VERSION_NAME) {
+        if (BuildConfig.UPDATER_AVAILABLE && Updater.isUpdateAvailable(BuildConfig.BASE_VERSION_NAME, latestVersionName)) {
             val releaseInfo = Updater.getCachedLatestRelease()
             val versionClean = releaseInfo?.tagName?.removePrefix("v") ?: latestVersionName.removePrefix("v")
             val downloadUrl = if (BuildConfig.CAST_AVAILABLE) {

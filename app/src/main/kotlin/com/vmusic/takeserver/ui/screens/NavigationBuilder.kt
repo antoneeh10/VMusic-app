@@ -55,6 +55,7 @@ import com.vmusic.takeserver.ui.screens.settings.PrivacySettings
 import com.vmusic.takeserver.ui.screens.settings.ProfileSettings
 import com.vmusic.takeserver.ui.screens.settings.RomanizationSettings
 import com.vmusic.takeserver.ui.screens.settings.SettingsScreen
+import com.vmusic.takeserver.ui.screens.settings.SpotifyCanvasSettings
 import com.vmusic.takeserver.ui.screens.settings.StorageSettings
 import com.vmusic.takeserver.ui.screens.settings.ThemeScreen
 import com.vmusic.takeserver.ui.screens.settings.UpdaterScreen
@@ -62,7 +63,7 @@ import com.vmusic.takeserver.ui.screens.settings.integrations.DiscordSettings
 import com.vmusic.takeserver.ui.screens.settings.integrations.IntegrationScreen
 import com.vmusic.takeserver.ui.screens.settings.integrations.LastFMSettings
 import com.vmusic.takeserver.ui.screens.settings.integrations.ListenTogetherSettings
-
+import com.vmusic.takeserver.ui.screens.settings.SpotifyLoginScreen
 import com.vmusic.takeserver.ui.screens.wrapped.WrappedScreen
 import com.vmusic.takeserver.utils.rememberEnumPreference
 import com.vmusic.takeserver.utils.rememberPreference
@@ -358,6 +359,10 @@ fun NavGraphBuilder.navigationBuilder(
         ExperimentalSettings(navController)
     }
 
+    composable("settings/experimental/spotify_canvas") {
+        SpotifyCanvasSettings(navController)
+    }
+
     composable("settings/appearance") {
         AppearanceSettings(navController, snackbarHostState)
     }
@@ -421,7 +426,9 @@ fun NavGraphBuilder.navigationBuilder(
     composable("login") {
         LoginScreen(navController)
     }
-
+    composable("settings/appearance/spotify_login") {
+        SpotifyLoginScreen(navController)
+    }
     composable("switch_channel") {
         LoginScreen(
             navController = navController,

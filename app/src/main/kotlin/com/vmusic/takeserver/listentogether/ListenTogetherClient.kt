@@ -53,6 +53,7 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okio.ByteString.Companion.toByteString
 import okhttp3.Response
 import okhttp3.WebSocket
 import okhttp3.WebSocketListener
@@ -1590,14 +1591,16 @@ class ListenTogetherClient
         ) {
             try {
                 val data = codec.encode(type, payload)
-                log(LogLevel.DEBUG, "Sending message", "$type (protobuf)")
+                log(LogLevel.DEBUG, "Sending message", "$type (protobuf), size: ${data.size} bytes")
 
-                val success = webSocket?.send(okio.ByteString.of(*data)) ?: false
+                val byteString = data.toByteString()
+                val success = webSocket?.send(byteString) ?: false
                 if (!success) {
-                    log(LogLevel.ERROR, "Failed to send message", type)
+                    log(LogLevel.ERROR, "Failed to send message (socket closed/full)", type)
                 }
             } catch (e: Exception) {
-                log(LogLevel.ERROR, "Error encoding message", "$type: ${e.message}")
+                log(LogLevel.ERROR, "Error encoding/sending message", "$type: ${e.message}")
+                e.printStackTrace()
             }
         }
 

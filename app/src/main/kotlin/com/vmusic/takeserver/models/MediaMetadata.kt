@@ -119,8 +119,10 @@ fun Song.toMediaMetadata() =
  * Converts an InnerTube [SongItem] into a [MediaMetadata] instance for use in the UI and player.
  * Thumbnails are resized to 1080x1080 for high-quality display.
  */
-fun SongItem.toMediaMetadata() =
-    MediaMetadata(
+fun SongItem.toMediaMetadata(): MediaMetadata {
+    val rawThumbnail = if (thumbnail.isNotBlank()) thumbnail else "https://i.ytimg.com/vi/$id/hqdefault.jpg"
+    val safeThumbnail = rawThumbnail.replace("/maxresdefault.jpg", "/hqdefault.jpg").resize(1080, 1080)
+    return MediaMetadata(
         id = id,
         title = title,
         artists =
@@ -131,7 +133,7 @@ fun SongItem.toMediaMetadata() =
             )
         },
         duration = duration ?: -1,
-        thumbnailUrl = thumbnail.resize(1080, 1080),
+        thumbnailUrl = safeThumbnail,
         album =
         album?.let {
             MediaMetadata.Album(
@@ -148,6 +150,7 @@ fun SongItem.toMediaMetadata() =
         isEpisode = isEpisode,
         uploadEntityId = uploadEntityId
     )
+}
 
 /**
  * Converts an InnerTube [EpisodeItem] into a [MediaMetadata] instance.

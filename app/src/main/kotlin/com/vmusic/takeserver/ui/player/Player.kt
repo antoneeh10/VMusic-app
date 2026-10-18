@@ -21,6 +21,7 @@ import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -30,6 +31,8 @@ import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -100,6 +103,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -202,6 +206,9 @@ import kotlinx.coroutines.withContext
 import kotlin.math.max
 import kotlin.math.roundToInt
 import com.vmusic.takeserver.ui.component.Icon as MIcon
+import com.vmusic.takeserver.ui.component.CanvasBackgroundVideo
+import com.vmusic.takeserver.ui.component.rememberCanvasUrl
+import androidx.compose.animation.EnterTransition
 import com.vmusic.takeserver.constants.SleepTimerDefaultKey
 import com.vmusic.takeserver.constants.SleepTimerFadeOutKey
 import com.vmusic.takeserver.constants.SleepTimerStopAfterCurrentSongKey
@@ -260,7 +267,7 @@ fun BottomSheetPlayer(
     val shouldUseDarkButtonColors =
         remember(playerBackground, useDarkTheme) {
             when (playerBackground) {
-                PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT -> true
+                PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT, PlayerBackgroundStyle.CANVAS -> true
                 PlayerBackgroundStyle.DEFAULT -> useDarkTheme
             }
         }
@@ -275,7 +282,7 @@ fun BottomSheetPlayer(
             val insetsController = WindowCompat.getInsetsController(window, window.decorView)
 
             when (playerBackground) {
-                PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT -> {
+                PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT, PlayerBackgroundStyle.CANVAS -> {
                     insetsController.isAppearanceLightStatusBars = false
                 }
 
@@ -468,6 +475,7 @@ fun BottomSheetPlayer(
             when (playerBackground) {
                 PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.onBackground
                 PlayerBackgroundStyle.BLUR -> Color.White
+                PlayerBackgroundStyle.CANVAS -> Color.White
                 PlayerBackgroundStyle.GRADIENT -> Color.White
             },
         label = "TextBackgroundColor",
@@ -478,6 +486,7 @@ fun BottomSheetPlayer(
             when (playerBackground) {
                 PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.surface
                 PlayerBackgroundStyle.BLUR -> Color.Black
+                PlayerBackgroundStyle.CANVAS -> Color.Black
                 PlayerBackgroundStyle.GRADIENT -> Color.Black
             },
         label = "icBackgroundColor",
@@ -822,7 +831,7 @@ fun BottomSheetPlayer(
 
     val bottomSheetBackgroundColor =
         when (playerBackground) {
-            PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT -> {
+            PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.GRADIENT, PlayerBackgroundStyle.CANVAS -> {
                 MaterialTheme.colorScheme.surfaceContainer
             }
 
@@ -836,26 +845,37 @@ fun BottomSheetPlayer(
         }
 
     val backgroundAlpha = state.progress.coerceIn(0f, 1f)
-
+    val canvasBgUrl =
+        if (playerBackground == PlayerBackgroundStyle.CANVAS) {
+            rememberCanvasUrl(
+                mediaId = mediaMetadata?.id,
+                title = mediaMetadata?.title,
+                artist = mediaMetadata?.artists?.joinToString { it.name },
+            )
+        } else {
+            null
+        }
+    var canvasFailedUrl by remember { mutableStateOf<String?>(null) }
+    val canvasBackgroundActive = canvasBgUrl != null && canvasBgUrl != canvasFailedUrl
     BottomSheet(
         state = state,
         modifier = modifier,
         background = {
-            val infiniteTransition = rememberInfiniteTransition(label = "fluidBackground")
+            val infiniteTransition = rememberInfiniteTransition(label = "continuousFluidBackground")
             val fluidProgress by infiniteTransition.animateFloat(
                 initialValue = 0f,
                 targetValue = 1f,
                 animationSpec = infiniteRepeatable(
-                    animation = tween(10000, easing = androidx.compose.animation.core.FastOutSlowInEasing),
-                    repeatMode = RepeatMode.Reverse
+                    animation = tween(12000, easing = LinearEasing),
+                    repeatMode = RepeatMode.Restart
                 ),
                 label = "fluidProgress"
             )
-            val rad = fluidProgress * Math.PI.toFloat()
-            val fluidTranslationX = (sin(rad) * 75f)
-            val fluidTranslationY = (cos(rad * 0.8f) * 75f)
-            val fluidScale = 1.3f + (fluidProgress * 0.12f)
-            val fluidRotation = (sin(rad * 0.9f) * 5f)
+            val rad = fluidProgress * 2f * Math.PI.toFloat()
+            val fluidTranslationX = (sin(rad) * 20f + cos(rad * 2f) * 10f)
+            val fluidTranslationY = (cos(rad) * 20f + sin(rad * 2f) * 10f)
+            val fluidScale = 3.0f + (sin(rad) * 0.2f)
+            val fluidRotation = (fluidProgress * 360f)
 
             Box(
                 modifier =
@@ -864,9 +884,25 @@ fun BottomSheetPlayer(
                         .background(bottomSheetBackgroundColor),
             ) {
                 when (playerBackground) {
-                    PlayerBackgroundStyle.BLUR -> {
+                    PlayerBackgroundStyle.BLUR, PlayerBackgroundStyle.CANVAS -> {
+                        val resolvedThumbnailUrl =
+                            remember(mediaMetadata?.id, mediaMetadata?.thumbnailUrl) {
+                                val meta = mediaMetadata
+                                val raw = meta?.thumbnailUrl
+                                val urlToSanitize = if (!raw.isNullOrBlank()) {
+                                    raw
+                                } else if (meta != null && meta.id.isNotBlank() && !meta.id.startsWith(
+                                        "local_"
+                                    )
+                                ) {
+                                    "https://i.ytimg.com/vi/${meta.id}/hqdefault.jpg"
+                                } else null
+
+                                urlToSanitize?.replace("/maxresdefault.jpg", "/hqdefault.jpg")
+                            }
+
                         AnimatedContent(
-                            targetState = mediaMetadata?.thumbnailUrl,
+                            targetState = resolvedThumbnailUrl,
                             transitionSpec = {
                                 fadeIn(tween(800)).togetherWith(fadeOut(tween(800)))
                             },
@@ -894,7 +930,7 @@ fun BottomSheetPlayer(
                                                     translationY = fluidTranslationY
                                                     rotationZ = fluidRotation
                                                 }
-                                                .blur(if (useDarkTheme) 150.dp else 100.dp),
+                                                .blur(65.dp),
                                     )
                                     Box(
                                         modifier =
@@ -945,6 +981,19 @@ fun BottomSheetPlayer(
                         PlayerBackgroundStyle.DEFAULT
                     }
                 }
+                if (canvasBgUrl != null && canvasBackgroundActive && backgroundAlpha > 0.05f) {
+                    AnimatedVisibility(
+                        visible = !showInlineLyrics,
+                        enter = EnterTransition.None,
+                        exit = fadeOut(tween(400)),
+                        modifier = Modifier.alpha(backgroundAlpha),
+                    ) {
+                        CanvasBackgroundVideo(
+                            canvasUrl = canvasBgUrl,
+                            onError = { canvasFailedUrl = it },
+                        )
+                    }
+                }
             }
         },
         onDismiss =
@@ -983,6 +1032,19 @@ fun BottomSheetPlayer(
                 AnimatedContent(
                     targetState = showInlineLyrics,
                     label = "ThumbnailAnimation",
+                    transitionSpec = {
+                        if (targetState) {
+                            (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                             scaleIn(initialScale = 0.3f, transformOrigin = TransformOrigin(0f, 0.5f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                            .togetherWith(fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                        } else {
+                            fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                            .togetherWith(
+                                fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                scaleOut(targetScale = 0.3f, transformOrigin = TransformOrigin(0f, 0.5f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                            )
+                        }
+                    }
                 ) { showLyrics ->
                     if (showLyrics) {
                         Row {
@@ -1905,7 +1967,23 @@ fun BottomSheetPlayer(
                         AnimatedContent(
                             targetState = showInlineLyrics,
                             label = "Lyrics",
-                            transitionSpec = { fadeIn() togetherWith fadeOut() },
+                            transitionSpec = {
+                                if (targetState) {
+                                    (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                     scaleIn(initialScale = 0.85f, animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                                    .togetherWith(
+                                        fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                        scaleOut(targetScale = 0.2f, transformOrigin = TransformOrigin(0.1f, 0.9f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                                    )
+                                } else {
+                                    (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                     scaleIn(initialScale = 0.2f, transformOrigin = TransformOrigin(0.1f, 0.9f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                                    .togetherWith(
+                                        fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                        scaleOut(targetScale = 0.85f, animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                                    )
+                                }
+                            },
                         ) { showLyrics ->
                             if (showLyrics) {
                                 InlineLyricsView(
@@ -1920,6 +1998,7 @@ fun BottomSheetPlayer(
                                     isPlayerExpanded = isExpandedProvider,
                                     isLandscape = true,
                                     isListenTogetherGuest = isListenTogetherGuest,
+                                    canvasBackgroundActive = canvasBackgroundActive,
                                 )
                             }
                         }
@@ -1968,7 +2047,23 @@ fun BottomSheetPlayer(
                         AnimatedContent(
                             targetState = showInlineLyrics,
                             label = "Lyrics",
-                            transitionSpec = { fadeIn() togetherWith fadeOut() },
+                            transitionSpec = {
+                                if (targetState) {
+                                    (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                     scaleIn(initialScale = 0.85f, animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                                    .togetherWith(
+                                        fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                        scaleOut(targetScale = 0.2f, transformOrigin = TransformOrigin(0.1f, 0.9f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                                    )
+                                } else {
+                                    (fadeIn(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                     scaleIn(initialScale = 0.2f, transformOrigin = TransformOrigin(0.1f, 0.9f), animationSpec = spring(stiffness = Spring.StiffnessMediumLow)))
+                                    .togetherWith(
+                                        fadeOut(animationSpec = spring(stiffness = Spring.StiffnessMediumLow)) +
+                                        scaleOut(targetScale = 0.85f, animationSpec = spring(stiffness = Spring.StiffnessMediumLow))
+                                    )
+                                }
+                            },
                         ) { showLyrics ->
                             if (showLyrics) {
                                 InlineLyricsView(
@@ -1982,6 +2077,7 @@ fun BottomSheetPlayer(
                                     modifier = Modifier.nestedScroll(state.preUpPostDownNestedScrollConnection),
                                     isPlayerExpanded = isExpandedProvider,
                                     isListenTogetherGuest = isListenTogetherGuest,
+                                    canvasBackgroundActive = canvasBackgroundActive,
                                 )
                             }
                         }

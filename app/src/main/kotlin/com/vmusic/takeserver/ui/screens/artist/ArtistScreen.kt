@@ -36,8 +36,11 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -61,6 +64,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
@@ -297,157 +301,141 @@ fun ArtistScreen(
                 item(key = "header") {
                     val thumbnail = artistPage?.artist?.thumbnail ?: libraryArtist?.artist?.thumbnailUrl
 
-                    Box {
-                        // Artist Image with offset
-                        if (thumbnail != null) {
-                            Box(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .aspectRatio(1f)
-                                        .offset {
-                                            IntOffset(x = 0, y = headerOffset)
-                                        },
-                            ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 12.dp)
+                    ) {
+                        // Artist Banner / Hero
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp, vertical = 8.dp)
+                        ) {
+                            if (thumbnail != null) {
                                 AsyncImage(
                                     model = thumbnail.resize(1200, 1200),
                                     contentDescription = null,
                                     contentScale = ContentScale.Crop,
-                                    modifier =
-                                        Modifier
-                                            .fillMaxWidth()
-                                            .align(Alignment.TopCenter)
-                                            .fadingEdge(
-                                                bottom = 200.dp,
-                                            ),
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1.25f)
+                                        .clip(RoundedCornerShape(24.dp))
+                                )
+                            } else {
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .aspectRatio(1.25f)
+                                        .clip(RoundedCornerShape(24.dp))
+                                        .background(MaterialTheme.colorScheme.surfaceContainerHigh)
                                 )
                             }
                         }
 
-                        // Artist Name and Controls Section - positioned at bottom of image
-                        Column(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(
-                                        top =
-                                            if (thumbnail != null) {
-                                                // Position content at the bottom part of the image
-                                                // Using screen width to calculate aspect ratio height minus overlap
-                                                LocalResources.current.displayMetrics.widthPixels.let { screenWidth ->
-                                                    with(density) {
-                                                        ((screenWidth / 1.2f) - 144).toDp()
-                                                    }
-                                                }
-                                            } else {
-                                                16.dp
-                                            },
-                                    ),
-                        ) {
-                            Column(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp),
-                            ) {
-                                // Artist Name
-                                Text(
-                                    text = displayArtistName ?: "Unknown",
-                                    style = MaterialTheme.typography.headlineLarge,
-                                    fontWeight = FontWeight.Bold,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    fontSize = 32.sp,
-                                    modifier = Modifier.padding(bottom = 16.dp),
-                                )
+                        // Artist Name
+                        Text(
+                            text = displayArtistName ?: "Unknown",
+                            style = MaterialTheme.typography.headlineLarge,
+                            fontWeight = FontWeight.Bold,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 8.dp)
+                        )
 
-                                // Buttons Row
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    // Subscribe Button
+                        // Action Buttons Row
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 20.dp, vertical = 4.dp),
+                            horizontalArrangement = Arrangement.spacedBy(12.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            // Subscribe Button
+                            OutlinedButton(
+                                onClick = { viewModel.toggleChannelSubscription() },
+                                colors = ButtonDefaults.outlinedButtonColors(
+                                    containerColor = if (isChannelSubscribed) {
+                                        MaterialTheme.colorScheme.surfaceContainerHigh
+                                    } else {
+                                        MaterialTheme.colorScheme.primaryContainer
+                                    },
+                                    contentColor = if (isChannelSubscribed) {
+                                        MaterialTheme.colorScheme.onSurface
+                                    } else {
+                                        MaterialTheme.colorScheme.onPrimaryContainer
+                                    }
+                                ),
+                                shape = RoundedCornerShape(50),
+                                modifier = Modifier.height(44.dp)
+                            ) {
+                                Icon(
+                                    painter = painterResource(if (isChannelSubscribed) R.drawable.check else R.drawable.add),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(18.dp)
+                                )
+                                Spacer(modifier = Modifier.width(6.dp))
+                                Text(
+                                    text = stringResource(if (isChannelSubscribed) R.string.subscribed else R.string.subscribe),
+                                    style = MaterialTheme.typography.labelLarge,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+
+                            // Radio Button
+                            if (!showLocal && !isGuest && artistPage?.artist?.radioEndpoint != null) {
+                                artistPage.artist.radioEndpoint?.let { radioEndpoint ->
                                     OutlinedButton(
                                         onClick = {
-                                            viewModel.toggleChannelSubscription()
+                                            playerConnection.playQueue(YouTubeQueue(radioEndpoint))
                                         },
-                                        colors =
-                                            ButtonDefaults.outlinedButtonColors(
-                                                containerColor =
-                                                    if (isChannelSubscribed) {
-                                                        MaterialTheme.colorScheme.surface
-                                                    } else {
-                                                        Color.Transparent
-                                                    },
-                                            ),
                                         shape = RoundedCornerShape(50),
-                                        modifier = Modifier.height(40.dp),
+                                        colors = ButtonDefaults.outlinedButtonColors(
+                                            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh,
+                                            contentColor = MaterialTheme.colorScheme.onSurface
+                                        ),
+                                        modifier = Modifier.height(44.dp)
                                     ) {
-                                        Text(
-                                            text = stringResource(if (isChannelSubscribed) R.string.subscribed else R.string.subscribe),
-                                            fontSize = 14.sp,
-                                            color = if (!isChannelSubscribed) MaterialTheme.colorScheme.error else LocalContentColor.current,
+                                        Icon(
+                                            painter = painterResource(R.drawable.radio),
+                                            contentDescription = null,
+                                            modifier = Modifier.size(18.dp)
                                         )
-                                    }
-
-                                    Spacer(modifier = Modifier.weight(1f))
-
-                                    Row(
-                                        horizontalArrangement = Arrangement.spacedBy(16.dp),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        // Radio Button
-                                        if (!showLocal && !isGuest) {
-                                            artistPage?.artist?.radioEndpoint?.let { radioEndpoint ->
-                                                OutlinedButton(
-                                                    onClick = {
-                                                        playerConnection.playQueue(YouTubeQueue(radioEndpoint))
-                                                    },
-                                                    shape = RoundedCornerShape(50),
-                                                    modifier = Modifier.height(40.dp),
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.radio),
-                                                        contentDescription = null,
-                                                        modifier = Modifier.size(20.dp),
-                                                    )
-                                                    Spacer(modifier = Modifier.width(8.dp))
-                                                    Text(
-                                                        text = stringResource(R.string.radio),
-                                                        fontSize = 14.sp,
-                                                    )
-                                                }
-                                            }
-                                        }
-
-                                        // Shuffle Button
-                                        if (!showLocal && !isGuest) {
-                                            artistPage?.artist?.shuffleEndpoint?.let { shuffleEndpoint ->
-                                                IconButton(
-                                                    onClick = {
-                                                        playerConnection.playQueue(YouTubeQueue(shuffleEndpoint))
-                                                    },
-                                                    modifier =
-                                                        Modifier
-                                                            .size(48.dp)
-                                                            .background(
-                                                                MaterialTheme.colorScheme.primary,
-                                                                RoundedCornerShape(24.dp),
-                                                            ),
-                                                ) {
-                                                    Icon(
-                                                        painter = painterResource(R.drawable.shuffle),
-                                                        contentDescription = "Shuffle",
-                                                        tint = MaterialTheme.colorScheme.onPrimary,
-                                                        modifier = Modifier.size(20.dp),
-                                                    )
-                                                }
-                                            }
-                                        }
+                                        Spacer(modifier = Modifier.width(6.dp))
+                                        Text(
+                                            text = stringResource(R.string.radio),
+                                            style = MaterialTheme.typography.labelLarge,
+                                            fontWeight = FontWeight.SemiBold
+                                        )
                                     }
                                 }
                             }
-                            Spacer(modifier = Modifier.height(16.dp))
+
+                            // Shuffle Button
+                            if (!showLocal && !isGuest && artistPage?.artist?.shuffleEndpoint != null) {
+                                artistPage.artist.shuffleEndpoint?.let { shuffleEndpoint ->
+                                    IconButton(
+                                        onClick = {
+                                            playerConnection.playQueue(YouTubeQueue(shuffleEndpoint))
+                                        },
+                                        modifier = Modifier
+                                            .size(44.dp)
+                                            .background(
+                                                MaterialTheme.colorScheme.primaryContainer,
+                                                CircleShape
+                                            )
+                                    ) {
+                                        Icon(
+                                            painter = painterResource(R.drawable.shuffle),
+                                            contentDescription = "Shuffle",
+                                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }
@@ -464,63 +452,57 @@ fun ArtistScreen(
                         (showMonthlyListeners && !monthlyListeners.isNullOrEmpty())
                     ) {
                         item(key = "about_artist") {
-                            Column(
-                                modifier =
-                                    Modifier
-                                        .fillMaxWidth()
-                                        .padding(horizontal = 16.dp)
-                                        .padding(bottom = 16.dp)
-                                        .animateItem(),
+                            Card(
+                                colors = CardDefaults.cardColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceContainer
+                                ),
+                                shape = RoundedCornerShape(24.dp),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp, vertical = 8.dp)
+                                    .animateItem()
                             ) {
-                                if (showArtistDescription && (!description.isNullOrEmpty() || !descriptionRuns.isNullOrEmpty())) {
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(20.dp)
+                                ) {
                                     Text(
                                         text = stringResource(R.string.about_artist),
-                                        style = MaterialTheme.typography.titleMedium,
+                                        style = MaterialTheme.typography.titleLarge,
                                         fontWeight = FontWeight.Bold,
-                                        modifier = Modifier.padding(bottom = 8.dp),
+                                        color = MaterialTheme.colorScheme.onSurface,
+                                        modifier = Modifier.padding(bottom = 6.dp)
                                     )
-                                }
 
-                                if (showArtistSubscriberCount && !subscriberCount.isNullOrEmpty()) {
-                                    Text(
-                                        text = subscriberCount,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier = Modifier.padding(bottom = 4.dp),
-                                    )
-                                }
+                                    val subtitleText = remember(subscriberCount, monthlyListeners) {
+                                        listOfNotNull(
+                                            subscriberCount.takeIf { showArtistSubscriberCount && !it.isNullOrEmpty() },
+                                            monthlyListeners.takeIf { showMonthlyListeners && !it.isNullOrEmpty() }
+                                        ).joinToString(" • ")
+                                    }
 
-                                if (showMonthlyListeners && !monthlyListeners.isNullOrEmpty()) {
-                                    Text(
-                                        text = monthlyListeners,
-                                        style = MaterialTheme.typography.bodyMedium,
-                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        modifier =
-                                            Modifier.padding(
-                                                bottom =
-                                                    if (showArtistDescription &&
-                                                        !description.isNullOrEmpty()
-                                                    ) {
-                                                        8.dp
-                                                    } else {
-                                                        0.dp
-                                                    },
-                                            ),
-                                    )
-                                }
+                                    if (subtitleText.isNotEmpty()) {
+                                        Text(
+                                            text = subtitleText,
+                                            style = MaterialTheme.typography.bodyMedium,
+                                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                                            modifier = Modifier.padding(bottom = 10.dp)
+                                        )
+                                    }
 
-                                if (showArtistDescription && (!description.isNullOrEmpty() || !descriptionRuns.isNullOrEmpty())) {
-                                    ExpandableText(
-                                        text = description.orEmpty(),
-                                        runs =
-                                            descriptionRuns?.map {
+                                    if (showArtistDescription && (!description.isNullOrEmpty() || !descriptionRuns.isNullOrEmpty())) {
+                                        ExpandableText(
+                                            text = description.orEmpty(),
+                                            runs = descriptionRuns?.map {
                                                 LinkSegment(
                                                     text = it.text,
-                                                    url = it.navigationEndpoint?.urlEndpoint?.url,
+                                                    url = it.navigationEndpoint?.urlEndpoint?.url
                                                 )
                                             },
-                                        collapsedMaxLines = 3,
-                                    )
+                                            collapsedMaxLines = 3
+                                        )
+                                    }
                                 }
                             }
                         }
@@ -668,18 +650,43 @@ fun ArtistScreen(
                     artistPage?.sections?.forEachIndexed { index, section ->
                         if (section.items.isNotEmpty()) {
                             item(key = "section_${section.title}") {
-                                NavigationTitle(
-                                    title = section.title,
-                                    modifier = Modifier.animateItem(),
-                                    onClick =
-                                        section.moreEndpoint?.let {
-                                            {
+                                Row(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                                        .animateItem(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    horizontalArrangement = Arrangement.SpaceBetween
+                                ) {
+                                    Text(
+                                        text = section.title,
+                                        style = MaterialTheme.typography.titleLarge,
+                                        fontWeight = FontWeight.Bold,
+                                        color = MaterialTheme.colorScheme.onSurface
+                                    )
+                                    section.moreEndpoint?.let { moreEndpoint ->
+                                        IconButton(
+                                            onClick = {
                                                 navController.navigate(
-                                                    "artist/${viewModel.artistId}/items?browseId=${it.browseId}?params=${it.params}",
+                                                    "artist/${viewModel.artistId}/items?browseId=${moreEndpoint.browseId}?params=${moreEndpoint.params}",
                                                 )
-                                            }
-                                        },
-                                )
+                                            },
+                                            modifier = Modifier
+                                                .size(36.dp)
+                                                .background(
+                                                    MaterialTheme.colorScheme.surfaceContainerHigh,
+                                                    CircleShape
+                                                )
+                                        ) {
+                                            Icon(
+                                                painter = painterResource(R.drawable.navigate_next),
+                                                contentDescription = "Show More",
+                                                tint = MaterialTheme.colorScheme.onSurface,
+                                                modifier = Modifier.size(20.dp)
+                                            )
+                                        }
+                                    }
+                                }
                             }
                         }
 

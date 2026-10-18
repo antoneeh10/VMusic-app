@@ -125,7 +125,7 @@ private val communityLinks = listOf(
     CommunityLink(R.string.credits_discord, R.drawable.bug_report, "https://github.com/antoneeh10/VMusic-app/issues"),
     CommunityLink(R.string.credits_telegram, R.drawable.github, "https://github.com/antoneeh10/VMusic-app"),
     CommunityLink(R.string.credits_view_repo, R.drawable.github, "https://github.com/antoneeh10/VMusic-app-desktop"),
-    CommunityLink(R.string.credits_license_name, R.drawable.info, "https://github.com/MetrolistGroup/Metrolist/blob/main/LICENSE")
+    CommunityLink(R.string.credits_license_name, R.drawable.info, "https://github.com/antoneeh10/VMusic/blob/main/LICENSE")
 )
 
 private fun handleEasterEggClick(

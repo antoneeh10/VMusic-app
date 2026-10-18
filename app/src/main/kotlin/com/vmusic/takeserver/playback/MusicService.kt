@@ -206,6 +206,9 @@ import com.vmusic.takeserver.playback.queues.filterExplicit
 import com.vmusic.takeserver.playback.queues.filterVideoSongs
 import com.vmusic.takeserver.constants.LoudnessLevel
 import com.vmusic.takeserver.constants.LoudnessLevelKey
+import com.vmusic.takeserver.constants.SpatialModeKey
+import com.vmusic.takeserver.constants.SpatialStrengthKey
+import com.vmusic.takeserver.playback.audio.SpatialAudioProcessor
 import com.vmusic.takeserver.utils.CoilBitmapLoader
 import com.vmusic.takeserver.utils.NetworkConnectivityObserver
 import com.vmusic.takeserver.utils.ScrobbleManager
@@ -425,6 +428,7 @@ class MusicService :
     private var openedAudioEffectSessionId: Int = C.AUDIO_SESSION_ID_UNSET
     private val playerNormalizationProcessors = HashMap<Player, VolumeNormalizationAudioProcessor>()
     private val playerEqualizerProcessors = HashMap<Player, CustomEqualizerAudioProcessor>()
+    private val playerSpatialProcessors = HashMap<Player, SpatialAudioProcessor>()
 
     private var loudnessSetupJob: Job? = null
     private var loudnessSetupGeneration: Long = 0L
@@ -631,6 +635,24 @@ class MusicService :
         // never calls dataStore.get() (which does runBlocking internally).
         // This consolidates ~15 main-thread-blocking DataStore reads into 1.
         startupPrefs = runBlocking(Dispatchers.IO) { dataStore.data.first() }
+
+        scope.launch(Dispatchers.IO) {
+            dataStore.data
+                .map { it[SpatialModeKey] ?: false }
+                .distinctUntilChanged()
+                .collect { enabled ->
+                    playerSpatialProcessors.values.forEach { it.setEnabled(enabled) }
+                }
+        }
+
+        scope.launch(Dispatchers.IO) {
+            dataStore.data
+                .map { it[SpatialStrengthKey] ?: 50 }
+                .distinctUntilChanged()
+                .collect { strength ->
+                    playerSpatialProcessors.values.forEach { it.setStrength(strength) }
+                }
+        }
 
         // 3. Connect the processor to the service
         // handled in createExoPlayer
@@ -1289,6 +1311,11 @@ class MusicService :
     private fun createExoPlayer(prefs: Preferences? = null): ExoPlayer {
         val normalizationProcessor = VolumeNormalizationAudioProcessor()
         val eqProcessor = CustomEqualizerAudioProcessor()
+        val spatialProcessor = SpatialAudioProcessor()
+        val initialSpatial = prefs?.get(SpatialModeKey) ?: runBlocking { dataStore.get(SpatialModeKey, false) }
+        val initialStrength = prefs?.get(SpatialStrengthKey) ?: runBlocking { dataStore.get(SpatialStrengthKey, 50) }
+        spatialProcessor.setEnabled(initialSpatial)
+        spatialProcessor.setStrength(initialStrength)
 
         val silenceProcessor = SilenceDetectorAudioProcessor { handleLongSilenceDetected() }
 
@@ -1314,7 +1341,7 @@ class MusicService :
                 .setMediaSourceFactory(
                     createMediaSourceFactory(normalizationProcessor) { createdPlayer },
                 )
-                .setRenderersFactory(createRenderersFactory(normalizationProcessor, eqProcessor, silenceProcessor, useAudioTrackPlaybackParams))
+                .setRenderersFactory(createRenderersFactory(normalizationProcessor, eqProcessor, spatialProcessor, silenceProcessor, useAudioTrackPlaybackParams))
                 .setLoadControl(
                     // Start playback once ~750ms is buffered (media3's default is 1000ms) so first
                     // audio is audible a touch sooner. min/max/after-rebuffer match the media3 1.x
@@ -1342,6 +1369,7 @@ class MusicService :
         playerNormalizationProcessors[player] = normalizationProcessor
         playerSilenceProcessors[player] = silenceProcessor
         playerEqualizerProcessors[player] = eqProcessor
+        playerSpatialProcessors[player] = spatialProcessor
         equalizerService.addAudioProcessor(eqProcessor)
 
         if (prefs != null) {
@@ -3975,6 +4003,7 @@ class MusicService :
     private fun createRenderersFactory(
         normalizationProcessor: VolumeNormalizationAudioProcessor,
         eqProcessor: CustomEqualizerAudioProcessor,
+        spatialProcessor: SpatialAudioProcessor,
         silenceProcessor: SilenceDetectorAudioProcessor,
         useAudioTrackPlaybackParams: Boolean,
     ) = object : DefaultRenderersFactory(this) {
@@ -4035,6 +4064,7 @@ class MusicService :
                     arrayOf(
                         normalizationProcessor,
                         eqProcessor,
+                        spatialProcessor,
                         silenceProcessor,
                     ),
                     SilenceSkippingAudioProcessor(2_000_000, 20_000, 256),
@@ -5019,6 +5049,7 @@ class MusicService :
         playerNormalizationProcessors.remove(player)
         playerSilenceProcessors.remove(player)
         playerEqualizerProcessors.remove(player)?.let(equalizerService::removeAudioProcessor)
+        playerSpatialProcessors.remove(player)
         player.release()
     }
 
