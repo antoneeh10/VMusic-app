@@ -1,4 +1,22 @@
+
 # Changelog
+
+## [v1.2.0] - 2026-11-23
+>>>>>>> (feat: add new features and redesign apps)
+### Added
+- **wrapped:** introduce VMusic Wrapped to showcase personalized music listening statistics and listening habits.
+- **sharing:** introduce 3D Custom Image Sharing, allowing users to create personalized music-sharing visuals using their own photos.
+
+### Changed
+- **home:** redesign the Home Page with a refreshed Material 3 Expressive interface.
+- **settings:** completely redesign the Settings Page with an improved layout, navigation, and organized preference categories.
+- **settings:** revamp the settings menu system for a more intuitive and consistent user experience.
+- **sharing:** enhance music-sharing visuals with custom image integration and expressive 3D-inspired compositions.
+
+### Improved
+- **memory:** optimize application memory usage to reduce RAM consumption.
+- **ui:** improve visual consistency and interface interactions across the application.
+- **performance:** refine overall application performance and stability.
 
 ## [v1.1.0] - 2026-10-18
 >>>>>>> 142e030 (feat: add Spotify Canvas and experimental Spatial Sound)
