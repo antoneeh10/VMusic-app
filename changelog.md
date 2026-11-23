@@ -2,7 +2,7 @@
 # Changelog
 
 ## [v1.2.0] - 2026-11-23
->>>>>>> (feat: add new features and redesign apps)
+>>>>>>> e5dce50 (feat: add new features and redesign apps)
 ### Added
 - **wrapped:** introduce VMusic Wrapped to showcase personalized music listening statistics and listening habits.
 - **sharing:** introduce 3D Custom Image Sharing, allowing users to create personalized music-sharing visuals using their own photos.
