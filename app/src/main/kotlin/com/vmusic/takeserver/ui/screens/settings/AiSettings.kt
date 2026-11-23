@@ -25,7 +25,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -56,8 +56,9 @@ import com.vmusic.takeserver.constants.OpenRouterModelKey
 import com.vmusic.takeserver.constants.TranslateLanguageKey
 import com.vmusic.takeserver.constants.TranslateModeKey
 import com.vmusic.takeserver.ui.component.EnumDialog
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.component.TextFieldDialog
 import com.vmusic.takeserver.utils.rememberPreference
 
@@ -474,28 +475,16 @@ fun AiSettings(navController: NavController) {
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-                ),
-            ).verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+    StickySettingsContent(
+        title = stringResource(R.string.ai_lyrics_translation),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top,
-                ),
-            ),
-        )
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.ai_provider),
             items =
                 listOf(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.explore_outlined),
                         title = { Text(stringResource(R.string.ai_provider)) },
                         description = { Text(aiProvider) },
@@ -511,7 +500,7 @@ fun AiSettings(navController: NavController) {
                         },
                     ),
                     if (aiProvider == "Custom") {
-                        Material3SettingsItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.link),
                             title = { Text(stringResource(R.string.ai_base_url)) },
                             description = { Text(openRouterBaseUrl.ifBlank { stringResource(R.string.not_set) }) },
@@ -525,13 +514,13 @@ fun AiSettings(navController: NavController) {
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.ai_setup_guide),
             items =
                 buildList {
                     if (aiProvider == "DeepL") {
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.key),
                                 title = { Text("DeepL ${stringResource(R.string.ai_api_key)}") },
                                 description = {
@@ -547,7 +536,7 @@ fun AiSettings(navController: NavController) {
                             ),
                         )
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.tune),
                                 title = { Text(stringResource(R.string.ai_deepl_formality)) },
                                 description = {
@@ -565,7 +554,7 @@ fun AiSettings(navController: NavController) {
                         )
                     } else {
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.key),
                                 title = { Text(stringResource(R.string.ai_api_key)) },
                                 description = {
@@ -581,7 +570,7 @@ fun AiSettings(navController: NavController) {
                             ),
                         )
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.discover_tune),
                                 title = { Text(stringResource(R.string.ai_model)) },
                                 description = { Text(openRouterModel.ifBlank { stringResource(R.string.not_set) }) },
@@ -594,13 +583,13 @@ fun AiSettings(navController: NavController) {
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.ai_translation_mode),
             items =
                 buildList {
                     if (aiProvider != "DeepL") {
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.translate),
                                 title = { Text(stringResource(R.string.ai_translation_mode)) },
                                 description = {
@@ -625,7 +614,7 @@ fun AiSettings(navController: NavController) {
                             ),
                         )
                         add(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.edit),
                                 title = { Text(stringResource(R.string.ai_system_prompt)) },
                                 description = {
@@ -644,7 +633,7 @@ fun AiSettings(navController: NavController) {
                         )
                     }
                     add(
-                        Material3SettingsItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.language),
                             title = { Text(stringResource(R.string.ai_target_language)) },
                             description = { Text(LanguageCodeToName[translateLanguage] ?: translateLanguage) },
@@ -657,15 +646,4 @@ fun AiSettings(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.ai_lyrics_translation)) },
-        navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
+    }

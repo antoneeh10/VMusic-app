@@ -51,7 +51,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -91,8 +91,9 @@ import com.vmusic.takeserver.listentogether.LogLevel
 import com.vmusic.takeserver.listentogether.RoomRole
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.IntegrationCard
-import com.vmusic.takeserver.ui.component.IntegrationCardItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
 import kotlinx.coroutines.flow.collectLatest
@@ -348,26 +349,20 @@ fun ListenTogetherSettings(navController: NavController) {
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
-            .verticalScroll(rememberScrollState()),
+    StickySettingsContent(
+        title = stringResource(R.string.listen_together),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top),
-            ),
-        )
 
-        // Settings section using IntegrationCard
+        // Settings section using ExpressiveSettingsGroup
         val selectedServer = remember(serverUrl) { ListenTogetherServers.findByUrl(serverUrl) }
 
         Column(modifier = Modifier.padding(horizontal = 16.dp)) {
-            IntegrationCard(
+            ExpressiveSettingsGroup(
                 title = stringResource(R.string.settings),
                 items =
                     listOf(
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.person),
                             title = { Text(stringResource(R.string.listen_together_blocked_users)) },
                             description = {
@@ -386,7 +381,7 @@ fun ListenTogetherSettings(navController: NavController) {
                                     null
                                 },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.cloud),
                             title = { Text(stringResource(R.string.listen_together_server_url)) },
                             description = {
@@ -400,7 +395,7 @@ fun ListenTogetherSettings(navController: NavController) {
                             },
                             onClick = { showServerUrlDialog = true },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.person),
                             title = { Text(stringResource(R.string.listen_together_username)) },
                             description = {
@@ -420,7 +415,7 @@ fun ListenTogetherSettings(navController: NavController) {
                                     }
                                 },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.done),
                             title = { Text(stringResource(R.string.listen_together_auto_approval_joins)) },
                             description = {
@@ -447,7 +442,7 @@ fun ListenTogetherSettings(navController: NavController) {
                             // Allow clicking to see disabled state, but only change if enabled
                             onClick = { if (roomState == null || role != RoomRole.GUEST) autoApprovalJoins = !autoApprovalJoins },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.done),
                             title = { Text(stringResource(R.string.listen_together_auto_approval_suggestions)) },
                             description = {
@@ -474,7 +469,7 @@ fun ListenTogetherSettings(navController: NavController) {
                             // Allow clicking to see disabled state, but only change if enabled
                             onClick = { if (roomState == null || role != RoomRole.GUEST) autoApproveSuggestions = !autoApproveSuggestions },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.volume_up),
                             title = { Text(stringResource(R.string.listen_together_sync_volume)) },
                             description = {
@@ -498,7 +493,7 @@ fun ListenTogetherSettings(navController: NavController) {
                             },
                             onClick = { syncHostVolume = !syncHostVolume },
                         ),
-                        IntegrationCardItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.bug_report),
                             title = { Text(stringResource(R.string.listen_together_view_logs)) },
                             description = {
@@ -513,21 +508,7 @@ fun ListenTogetherSettings(navController: NavController) {
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.listen_together)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
+    }
 
 @Composable
 fun LogsDialog(

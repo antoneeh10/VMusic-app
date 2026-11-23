@@ -35,6 +35,7 @@ import com.vmusic.takeserver.db.entities.ArtistEntity
 import com.vmusic.takeserver.db.entities.Event
 import com.vmusic.takeserver.db.entities.EventWithSong
 import com.vmusic.takeserver.db.entities.FormatEntity
+import com.vmusic.takeserver.db.entities.HourPlayCount
 import com.vmusic.takeserver.db.entities.LyricsEntity
 import com.vmusic.takeserver.db.entities.PlayCountEntity
 import com.vmusic.takeserver.db.entities.Playlist
@@ -610,6 +611,20 @@ interface DatabaseDao {
 
     @Query("SELECT COUNT(DISTINCT songId) FROM event WHERE timestamp >= :fromTimeStamp AND timestamp <= :toTimeStamp")
     fun getUniqueSongCountInRange(fromTimeStamp: LocalDateTime, toTimeStamp: LocalDateTime): Flow<Int>
+
+    @Query(
+        """
+        SELECT CAST(strftime('%H', timestamp / 1000, 'unixepoch', 'localtime') AS INTEGER) AS hour,
+               COUNT(*) AS count
+        FROM event
+        WHERE timestamp >= :fromTimeStamp AND timestamp <= :toTimeStamp
+        GROUP BY hour
+    """
+    )
+    fun getPlayCountsByHourInRange(fromTimeStamp: LocalDateTime, toTimeStamp: LocalDateTime): Flow<List<HourPlayCount>>
+
+    @Query("SELECT COUNT(*) FROM event WHERE timestamp >= :fromTimeStamp AND timestamp <= :toTimeStamp")
+    fun getPlayCountInRange(fromTimeStamp: LocalDateTime, toTimeStamp: LocalDateTime): Flow<Int>
 
     @Query(
         """

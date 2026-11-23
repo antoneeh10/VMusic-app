@@ -29,7 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -55,8 +55,9 @@ import com.vmusic.takeserver.R
 import com.vmusic.takeserver.db.entities.Song
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.menu.AddToPlaylistDialogOnline
 import com.vmusic.takeserver.ui.menu.CsvColumnMappingDialog
 import com.vmusic.takeserver.ui.menu.CsvImportProgressDialog
@@ -160,25 +161,16 @@ fun BackupAndRestore(
             }
         }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+    StickySettingsContent(
+        title = stringResource(R.string.backup_restore),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top,
-                ),
-            ),
-        )
 
         val appName = stringResource(R.string.app_name)
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             items =
                 listOf(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.action_backup)) },
                         icon = painterResource(R.drawable.backup),
                         onClick = {
@@ -190,21 +182,21 @@ fun BackupAndRestore(
                             )
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.action_restore)) },
                         icon = painterResource(R.drawable.restore),
                         onClick = {
                             restoreLauncher.launch(arrayOf("application/octet-stream"))
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.import_online)) },
                         icon = painterResource(R.drawable.playlist_add),
                         onClick = {
                             importM3uLauncherOnline.launch(arrayOf("audio/*"))
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.import_csv)) },
                         icon = painterResource(R.drawable.playlist_add),
                         onClick = {
@@ -217,22 +209,7 @@ fun BackupAndRestore(
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.backup_restore)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-
-    AddToPlaylistDialogOnline(
+        AddToPlaylistDialogOnline(
         isVisible = showChoosePlaylistDialogOnline,
         allowSyncing = false,
         initialTextFieldValue = importedTitle,

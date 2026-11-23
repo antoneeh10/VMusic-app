@@ -1,5 +1,7 @@
 package com.vmusic.takeserver.ui.screens.settings
 
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+
 import android.content.res.Configuration
 import android.os.Build
 import androidx.compose.animation.AnimatedVisibility
@@ -48,7 +50,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.ripple
@@ -160,6 +162,7 @@ fun ThemeScreen(
         )
     } else {
         PortraitThemeLayout(
+            navController = navController,
             innerPadding = PaddingValues(0.dp),
             darkMode = darkMode,
             onDarkModeChange = onDarkModeChange,
@@ -170,21 +173,11 @@ fun ThemeScreen(
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.theme_colors)) },
-        navigationIcon = {
-            IconButton(onClick = { navController.navigateUp() }) {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_back),
-                    contentDescription = stringResource(R.string.cd_back)
-                )
-            }
-        }
-    )
-}
+    }
 
 @Composable
 fun PortraitThemeLayout(
+    navController: NavController,
     innerPadding: PaddingValues,
     darkMode: DarkMode,
     onDarkModeChange: (DarkMode) -> Unit,
@@ -193,13 +186,10 @@ fun PortraitThemeLayout(
     selectedThemeColor: Color,
     onSelectedThemeColorChange: (Color) -> Unit
 ) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(innerPadding),
-        horizontalAlignment = Alignment.CenterHorizontally
+    StickySettingsContent(
+        title = stringResource(R.string.theme_colors),
+        navController = navController,
     ) {
-        Spacer(modifier = Modifier.weight(1f))
 
         Box(
             modifier = Modifier
@@ -214,7 +204,6 @@ fun PortraitThemeLayout(
             )
         }
 
-        Spacer(modifier = Modifier.weight(1f))
 
         ThemeControls(
             darkMode = darkMode,

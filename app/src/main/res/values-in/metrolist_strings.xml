@@ -890,4 +890,186 @@
     <string name="status_disconnected">Terputus</string>
     <string name="status_connecting">Menghubungkan…</string>
     <string name="status_error">Gagal</string>
+
+    <!-- Beranda & Eksplorasi -->
+    <string name="welcome_back">Selamat datang kembali! 👋</string>
+    <string name="quick_calls">Panggilan cepat</string>
+    <string name="cover_and_remix">Cover dan remix</string>
+    <string name="see_all">Lihat semua</string>
+    <string name="others">Lainnya</string>
+    <string name="other">Lainnya</string>
+    <string name="mood_happy">Senang</string>
+    <string name="mood_chill">Bersantai</string>
+    <string name="mood_energize">Mengisi energi</string>
+    <string name="player_pause">Jeda</string>
+    <string name="top_result">Hasil teratas</string>
+    <string name="recent_searches">Pencarian terbaru</string>
+    <string name="history_empty">Riwayat mendengarmu masih kosong</string>
+    <string name="expressive_floating_capsule_menu">Menu kapsul mengambang</string>
+    <string name="expressive_floating_capsule_menu_desc">Gaya menu kapsul mengambang Material 3 Expressive</string>
+    <string name="material_3_expressive">Material 3 Expressive</string>
+
+    <!-- Tentang & Kredit -->
+    <string name="acknowledgments">Ucapan Terima Kasih &amp; Kredit</string>
+    <string name="original_metrolist_developer">Pengembang Metrolist Asli</string>
+    <string name="about_title">Tentang</string>
+    <string name="about_vmusic_title">VMusic</string>
+    <string name="about_main_developer_title">Ardian</string>
+    <string name="about_main_developer_subtitle">Pengembang Utama</string>
+    <string name="about_buy_me_a_coffee">Traktir saya kopi!</string>
+    <string name="about_sociabuzz">Sociabuzz</string>
+    <string name="about_collaborators_section">KOLABORATOR</string>
+    <string name="about_collaborator_label">Kolaborator</string>
+    <string name="about_acknowledgments_section">UCAPAN TERIMA KASIH &amp; KREDIT</string>
+    <string name="about_metrolist_desc">Proyek klien YouTube Music open-source dasar</string>
+    <string name="about_coil_desc">Pustaka pemuat gambar untuk Kotlin Coroutines</string>
+    <string name="about_media3_desc">Pustaka pemutaran audio Android Media3</string>
+    <string name="about_kizzy_desc">Integrasi RPC Discord Rich Presence</string>
+
+    <!-- Tampilan -->
+    <string name="appearance_title">Tampilan</string>
+    <string name="appearance_section_theme">TEMA</string>
+    <string name="appearance_high_refresh_rate">Aktifkan refresh rate tinggi</string>
+    <string name="appearance_high_refresh_rate_desc">Paksa layar berjalan pada refresh rate tertinggi yang didukung (mis. 120Hz)</string>
+    <string name="appearance_landscape_scaling">Skala lanskap</string>
+    <string name="appearance_landscape_scaling_desc">Ukuran tampilan mode lanskap untuk layar yang lebih besar</string>
+    <string name="appearance_dynamic_theme">Aktifkan tema dinamis</string>
+    <string name="appearance_dynamic_theme_desc">Gunakan tema dinamis berdasarkan warna wallpaper</string>
+    <string name="appearance_dynamic_icon_color">Warna ikon dinamis</string>
+    <string name="appearance_dynamic_icon_color_desc">Gunakan tema dinamis untuk ikon aplikasi. Jika nonaktif, ikon memakai warna biasa.</string>
+    <string name="appearance_theme">Tema</string>
+    <string name="appearance_theme_desc">Sesuaikan tema aplikasi</string>
+    <string name="appearance_section_mini_player">MINI PLAYER</string>
+    <string name="appearance_new_mini_player_design">Desain mini player baru</string>
+    <string name="appearance_new_mini_player_design_desc">Tampilan mini player yang lebih modern</string>
+    <string name="lyrics_background_blur_intensity">Intensitas blur latar lirik</string>
+
+    <!-- Berbagi Musik -->
+    <string name="custom_music_share">Berbagi Musik Kustom</string>
+    <string name="music_share_choose_photo">Pilih foto</string>
+    <string name="music_share_change_photo">Ganti foto</string>
+    <string name="music_share_no_cutout">Cutout latar tidak tersedia — foto penuh yang digunakan.</string>
+    <string name="music_share_placement">Posisi UI musik</string>
+    <string name="music_share_top">Atas</string>
+    <string name="music_share_left">Kiri</string>
+    <string name="music_share_right">Kanan</string>
+    <string name="music_share_photo_object">Objek foto</string>
+    <string name="music_share_music_ui">UI musik</string>
+    <string name="music_share_size">Ukuran</string>
+    <string name="music_share_rotation">Rotasi</string>
+    <string name="music_share_opacity">Opasitas</string>
+    <string name="music_share_layer">Lapisan</string>
+    <string name="music_share_music_in_front">Musik di depan</string>
+    <string name="music_share_photo_in_front">Foto di depan</string>
+    <string name="music_share_reset">Atur ulang</string>
+    <string name="music_share_save">Simpan</string>
+    <string name="music_share_saved">Tersimpan di Pictures/Metrolist</string>
+    <string name="music_share_failed">Gagal membuat gambar</string>
+    <string name="music_share_discard_title">Buang perubahan?</string>
+    <string name="music_share_discard_message">Foto, posisi, dan penyesuaian ukuran akan hilang.</string>
+    <string name="music_share_keep_editing">Terus edit</string>
+    <string name="music_share_discard">Buang</string>
+
+    <!-- Pengaturan -->
+    <string name="search_settings">Cari pengaturan</string>
+    <string name="settings_section_interface">ANTARMUKA</string>
+    <string name="settings_section_player_and_content">PEMUTAR &amp; KONTEN</string>
+    <string name="settings_section_android_auto">ANDROID AUTO</string>
+    <string name="settings_section_privacy_security">PRIVASI &amp; KEAMANAN</string>
+    <string name="settings_section_storage_data">PENYIMPANAN &amp; DATA</string>
+    <string name="settings_section_experimental">FITUR EKSPERIMENTAL</string>
+    <string name="settings_section_system_about">SISTEM &amp; TENTANG</string>
+    <string name="settings_profile_title">Profil</string>
+    <string name="settings_profile_desc">Akun &amp; sinkronisasi</string>
+    <string name="settings_profile_login_prompt">Login untuk sinkronisasi</string>
+    <string name="settings_appearance_title">Tampilan</string>
+    <string name="settings_appearance_desc">Tema, warna dinamis, tata letak</string>
+    <string name="settings_integrations_title">Integrasi</string>
+    <string name="settings_integrations_desc">Last.fm, Discord, layanan lain</string>
+    <string name="settings_player_title">Pemutar dan audio</string>
+    <string name="settings_player_desc">Kualitas, equalizer, crossfade</string>
+    <string name="settings_content_title">Konten</string>
+    <string name="settings_content_desc">Bahasa, negara, filter konten</string>
+    <string name="settings_ai_lyrics_title">Terjemahan lirik AI</string>
+    <string name="settings_ai_lyrics_desc">Model, bahasa tujuan</string>
+    <string name="settings_android_auto_title">Android Auto</string>
+    <string name="settings_android_auto_desc">Tampilan &amp; kontrol di mobil</string>
+    <string name="settings_privacy_title">Privasi</string>
+    <string name="settings_privacy_desc">Izin, riwayat, data penggunaan</string>
+    <string name="settings_storage_title">Penyimpanan</string>
+    <string name="settings_storage_desc">Cache, unduhan, ruang memori</string>
+    <string name="settings_backup_restore_title">Cadangkan &amp; pulihkan</string>
+    <string name="settings_backup_restore_desc">Ekspor dan impor data aplikasi</string>
+    <string name="settings_experimental_title">Fitur eksperimen</string>
+    <string name="settings_experimental_desc">Fitur baru dalam pengujian</string>
+    <string name="settings_default_apps_title">Aplikasi default</string>
+    <string name="settings_default_apps_desc">Pengaturan tautan default</string>
+    <string name="settings_updater_title">Pembaruan</string>
+    <string name="settings_updater_desc">Periksa versi aplikasi terbaru</string>
+    <string name="settings_changelog_title">Catatan rilis</string>
+    <string name="settings_changelog_desc">Riwayat perubahan versi</string>
+    <string name="settings_about_title">Tentang VMusic</string>
+    <string name="settings_about_desc">Versi, lisensi, info pengembang</string>
+
+    <!-- Integrasi Spotify Canvas -->
+    <string name="spotify_canvas">Spotify Canvas</string>
+    <string name="spotify_canvas_desc">Putar video canvas Spotify sebagai latar pemutar</string>
+    <string name="spotify_canvas_token">Token Spotify (sp_dc)</string>
+    <string name="spotify_canvas_token_unset">Belum diatur. Ketuk untuk mengisi</string>
+    <string name="spotify_canvas_token_set">Tersimpan. Ketuk untuk mengganti</string>
+    <string name="spotify_canvas_token_title">Token Spotify (sp_dc)</string>
+    <string name="spotify_canvas_token_label">Token sp_dc</string>
+    <string name="spotify_login_in_app">Login di dalam aplikasi</string>
+    <string name="spotify_paste">Tempel</string>
+    <string name="spotify_open">Buka Spotify</string>
+    <string name="spotify_token_help">Login di dalam aplikasi mengambil token otomatis. Jika Google ditolak, gunakan login email/kode, atau login di browser lalu tempel cookie sp_dc di sini.</string>
+
+    <!-- Halaman pembaruan -->
+    <string name="up_to_date">Sudah versi terbaru</string>
+    <string name="check_again">Periksa lagi</string>
+    <string name="check_for_updates_desc">Cek versi tiap app dibuka</string>
+    <string name="update_notifications_desc">Kasih tahu kalau ada versi baru</string>
+    <string name="update_settings_section">PERBARUI PENGATURAN</string>
+
+    <!-- VMusic Wrapped story -->
+    <string name="wrapped_story_label">VMusic · VMUSIC AUDIO</string>
+    <string name="wrapped_story_title">Wrapped %d</string>
+    <string name="wrapped_story_intro_sub">tahun kamu, versi kamu. yuk lihat soundtrack hidup kamu sepanjang %d!</string>
+    <string name="wrapped_story_minutes_label">Total waktu dengerin</string>
+    <string name="wrapped_story_minutes_unit">menit</string>
+    <string name="wrapped_story_minutes_sub">setara %.1f hari nonstop tanpa tidur. keren banget sih!</string>
+    <string name="wrapped_story_artist_label">Artis nomor satu</string>
+    <string name="wrapped_story_artist_sub">diputar %d kali. kamu emang gak bisa lepas dari lagu-lagu mereka.</string>
+    <string name="wrapped_story_song_1_label">Lagu terbaik #1 kamu</string>
+    <string name="wrapped_story_song_2_label">Lagu terbaik #2 kamu</string>
+    <string name="wrapped_story_song_sub">%s · %dx diputar</string>
+    <string name="wrapped_story_song_playing">sedang memutar preview nada...</string>
+    <string name="wrapped_story_song_muted">audio dibisukan — tap ikon speaker untuk menyalakan</string>
+    <string name="wrapped_story_top5_label">Top 5 lagu %d</string>
+    <string name="wrapped_story_top5_footer">playlist andalan kamu</string>
+    <string name="wrapped_story_habit_label">Kebiasaan kamu</string>
+    <string name="wrapped_story_habit_night">Si Pemutar Tengah Malam</string>
+    <string name="wrapped_story_habit_morning">Si Pagi Hari</string>
+    <string name="wrapped_story_habit_day">Si Siang Produktif</string>
+    <string name="wrapped_story_habit_evening">Si Sore Santai</string>
+    <string name="wrapped_story_habit_sub">puncak dengerin kamu jam %02d.00. dunia udah tidur, kamu masih asyik muter lagu.</string>
+    <string name="wrapped_story_summary_header">VMusic Wrapped %d</string>
+    <string name="wrapped_story_summary_title">2 Lagu Terbaik %d</string>
+    <string name="wrapped_story_summary_songs">%s &amp; %s</string>
+    <string name="wrapped_story_top_artists">Top Artis</string>
+    <string name="wrapped_story_top_songs">Top Lagu</string>
+    <string name="wrapped_story_minutes_stat">menit dengerin</string>
+    <string name="wrapped_story_genre_stat">genre utama</string>
+    <string name="wrapped_story_share">Bagikan Kartu</string>
+    <string name="wrapped_story_again">Ulang</string>
+    <string name="wrapped_story_empty">Dengerin lebih banyak lagu dulu ya, biar Wrapped kamu seru!</string>
+    <string name="wrapped_story_single_song">Lagu terbaik #2 belum ada — baru satu lagu yang paling sering kamu putar.</string>
+    <string name="wrapped_story_genre_fallback">Indie Pop</string>
+    <string name="wrapped_story_rank">%d. %s</string>
+    <string name="wrapped_story_share_label">Bagikan Wr kamu</string>
+    <string name="wrapped_story_paused">Dijeda — tahan lagi untuk lanjut</string>
+    <string name="wrapped_story_settings_title">VMusic Wrapped</string>
+    <string name="wrapped_story_settings_desc">Lihat rangkuman mendengarmu tahun ini</string>
+    <string name="welcome_back_wrapped">Selamat datang kembali! 👋 Wrapped kamu sudah siap 🎉</string>
+    <string name="wrapped_story_handle">vmusic.takeserver.web.id</string>
 </resources>

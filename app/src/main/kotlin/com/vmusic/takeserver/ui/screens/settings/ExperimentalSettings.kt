@@ -25,7 +25,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,8 +45,9 @@ import com.vmusic.takeserver.constants.SpatialModeKey
 import com.vmusic.takeserver.constants.SpatialStrengthKey
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
 import kotlin.math.roundToInt
@@ -108,26 +109,15 @@ fun ExperimentalSettings(
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
-                )
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    StickySettingsContent(
+        title = stringResource(R.string.experimental_features),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)
-            )
-        )
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.experimental_features),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.discover_tune),
                     title = { Text(stringResource(R.string.expressive_floating_capsule_menu)) },
                     description = { Text(stringResource(R.string.expressive_floating_capsule_menu_desc)) },
@@ -162,7 +152,7 @@ fun ExperimentalSettings(
                         }
                     }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.equalizer),
                     title = { Text(stringResource(R.string.spatial_mode)) },
                     description = { Text(stringResource(R.string.spatial_mode_desc)) },
@@ -197,7 +187,7 @@ fun ExperimentalSettings(
                         }
                     }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.linear_scale),
                     title = {
                         Row(
@@ -234,18 +224,4 @@ fun ExperimentalSettings(
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.experimental_features)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }

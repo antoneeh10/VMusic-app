@@ -80,6 +80,8 @@ import com.vmusic.takeserver.ui.component.Material3MenuGroup
 import com.vmusic.takeserver.ui.component.Material3MenuItemData
 import com.vmusic.takeserver.ui.component.NewAction
 import com.vmusic.takeserver.ui.component.NewActionGrid
+import com.vmusic.takeserver.ui.screens.musicshare.MusicShareRoute
+import com.vmusic.takeserver.ui.screens.musicshare.ShareSongInfo
 import com.vmusic.takeserver.ui.utils.ShowMediaInfo
 import com.vmusic.takeserver.ui.utils.resize
 import com.vmusic.takeserver.utils.ArtistNameAliases
@@ -343,6 +345,22 @@ fun YouTubeSongMenu(
                             }
                             context.startActivity(Intent.createChooser(intent, null))
                             onDismiss()
+                        }
+                    ),
+                    NewAction(
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.insert_photo),
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        text = stringResource(R.string.custom_music_share),
+                        onClick = {
+                            val intent = MusicShareRoute.create(ShareSongInfo.from(song.toMediaMetadata()))
+                            onDismiss()
+                            navController.navigate(intent)
                         }
                     )
                 ),

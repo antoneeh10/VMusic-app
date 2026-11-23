@@ -26,7 +26,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -56,8 +56,9 @@ import com.vmusic.takeserver.constants.MaxSongCacheSizeKey
 import com.vmusic.takeserver.extensions.tryOrNull
 import com.vmusic.takeserver.ui.component.ActionPromptDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import android.text.format.Formatter
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
@@ -280,34 +281,22 @@ fun StorageSettings(
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-                ),
-            ).verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+    StickySettingsContent(
+        title = stringResource(R.string.storage),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top,
-                ),
-            ),
-        )
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.storage),
             items =
                 listOf(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.storage),
                         title = { Text(stringResource(R.string.downloaded_songs)) },
                         description = {
                             Text(text = Formatter.formatShortFileSize(context, downloadCacheSize))
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.clear_all),
                         title = { Text(stringResource(R.string.clear_all_downloads)) },
                         onClick = {
@@ -317,10 +306,10 @@ fun StorageSettings(
                 ),
         )
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.song_cache),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.cached),
                     title = { Text(stringResource(R.string.enable_song_cache)) },
                     description = { Text(stringResource(R.string.enable_song_cache_desc)) },
@@ -341,7 +330,7 @@ fun StorageSettings(
                     },
                     onClick = { onEnableSongCacheChange(!enableSongCache) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.cached),
                     title = { Text(stringResource(R.string.max_song_cache_size)) },
                     enabled = enableSongCache,
@@ -401,7 +390,7 @@ fun StorageSettings(
                             }
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.clear_all),
                         title = { Text(stringResource(R.string.clear_song_cache)) },
                         onClick = {
@@ -411,11 +400,11 @@ fun StorageSettings(
                 ),
         )
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.image_cache),
             items =
                 listOf(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.manage_search),
                         title = { Text(stringResource(R.string.max_image_cache_size)) },
                         description = {
@@ -464,7 +453,7 @@ fun StorageSettings(
                             }
                         },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.clear_all),
                         title = { Text(stringResource(R.string.clear_image_cache)) },
                         onClick = {
@@ -475,18 +464,4 @@ fun StorageSettings(
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.storage)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
+    }

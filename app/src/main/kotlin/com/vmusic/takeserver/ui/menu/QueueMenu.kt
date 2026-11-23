@@ -75,6 +75,8 @@ import com.vmusic.takeserver.ui.component.Material3MenuItemData
 import com.vmusic.takeserver.ui.component.MediaMetadataListItem
 import com.vmusic.takeserver.ui.component.NewAction
 import com.vmusic.takeserver.ui.component.NewActionGrid
+import com.vmusic.takeserver.ui.screens.musicshare.MusicShareRoute
+import com.vmusic.takeserver.ui.screens.musicshare.ShareSongInfo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
@@ -325,6 +327,21 @@ fun QueueMenu(
                                 )
                             }
                             context.startActivity(Intent.createChooser(intent, null))
+                        }
+                    ),
+                    NewAction(
+                        icon = {
+                            Icon(
+                                painter = painterResource(R.drawable.insert_photo),
+                                contentDescription = null,
+                                modifier = Modifier.size(28.dp),
+                                tint = MaterialTheme.colorScheme.onSurfaceVariant
+                            )
+                        },
+                        text = stringResource(R.string.custom_music_share),
+                        onClick = {
+                            onDismiss()
+                            navController.navigate(MusicShareRoute.create(ShareSongInfo.from(mediaMetadata)))
                         }
                     )
                 ),

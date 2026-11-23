@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -53,6 +54,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
@@ -62,6 +64,7 @@ import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.material3.surfaceColorAtElevation
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -78,6 +81,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -141,6 +145,7 @@ import com.vmusic.takeserver.ui.component.HideOnScrollFAB
 import com.vmusic.takeserver.ui.component.LocalBottomSheetPageState
 import com.vmusic.takeserver.ui.component.LocalMenuState
 import com.vmusic.takeserver.ui.component.NavigationTitle
+import com.vmusic.takeserver.ui.component.UnifiedHeader
 import com.vmusic.takeserver.ui.component.RandomizeGridItem
 import com.vmusic.takeserver.ui.component.SongGridItem
 import com.vmusic.takeserver.ui.component.SongListItem
@@ -167,6 +172,7 @@ import com.vmusic.takeserver.utils.rememberEnumPreference
 import com.vmusic.takeserver.utils.rememberPreference
 import com.vmusic.takeserver.viewmodels.CommunityPlaylistItem
 import com.vmusic.takeserver.viewmodels.HomeViewModel
+import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -199,8 +205,6 @@ sealed class HomeSection(
     data class HomePageSection(
         val index: Int,
     ) : HomeSection("home_page_section_$index", 10)
-
-    data object MoodAndGenres : HomeSection("mood_and_genres", 5)
 }
 
 @Composable
@@ -270,7 +274,8 @@ fun CommunityPlaylistCard(
                                 modifier =
                                     Modifier
                                         .weight(1f)
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(6.dp)),
                             )
                             AsyncImage(
                                 model =
@@ -283,7 +288,8 @@ fun CommunityPlaylistCard(
                                 modifier =
                                     Modifier
                                         .weight(1f)
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(6.dp)),
                             )
                         }
                         Row(modifier = Modifier.weight(1f)) {
@@ -298,7 +304,8 @@ fun CommunityPlaylistCard(
                                 modifier =
                                     Modifier
                                         .weight(1f)
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(6.dp)),
                             )
                             AsyncImage(
                                 model =
@@ -311,7 +318,8 @@ fun CommunityPlaylistCard(
                                 modifier =
                                     Modifier
                                         .weight(1f)
-                                        .fillMaxSize(),
+                                        .fillMaxSize()
+                                        .clip(RoundedCornerShape(6.dp)),
                             )
                         }
                     }
@@ -555,7 +563,8 @@ fun DailyDiscoverCard(
                 contentScale = ContentScale.Crop,
                 modifier =
                     Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(28.dp)),
             )
 
             if (maxWidth > 200.dp) {
@@ -1060,8 +1069,6 @@ fun HomeScreen(
                 list.add(HomeSection.HomePageSection(i))
             }
 
-            if (explorePage?.moodAndGenres != null) list.add(HomeSection.MoodAndGenres)
-
             if (randomizeHomeOrder) {
                 list.sortedByDescending { section ->
                     // Use a stable seed for each section based on the session seed + section ID hash
@@ -1124,7 +1131,6 @@ fun HomeScreen(
                         HomeSection.KeepListening to 60,
                         HomeSection.AccountPlaylists to 50,
                         HomeSection.ForgottenFavorites to 40,
-                        HomeSection.MoodAndGenres to 10,
                     )
 
                 list.sortedByDescending { section ->
@@ -1185,41 +1191,30 @@ fun HomeScreen(
                     )
                 }
 
+            val isHomeScrolled by remember {
+                derivedStateOf {
+                    lazylistState.canScrollBackward
+                }
+            }
+
             LazyColumn(
                 state = lazylistState,
-                contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
+                contentPadding = PaddingValues(bottom = LocalPlayerAwareWindowInsets.current.asPaddingValues().calculateBottomPadding()),
             ) {
-                item {
-                    ChipsRow(
-                        chips = homePage?.chips?.map { it to it.title } ?: emptyList(),
-                        currentValue = selectedChip,
-                        onValueUpdate = {
-                            viewModel.toggleChip(it)
-                        },
+                stickyHeader(key = "home_header") {
+                    UnifiedHeader(
+                        title = "Beranda",
+                        subtitle =
+                            stringResource(
+                                if (LocalDate.now().monthValue == 12) {
+                                    R.string.welcome_back_wrapped
+                                } else {
+                                    R.string.welcome_back
+                                },
+                            ),
+                        isScrolled = isHomeScrolled,
+                        animateTransition = true,
                     )
-                }
-
-                if (isLoading && homePage?.chips.isNullOrEmpty()) {
-                    item(key = "chips_shimmer") {
-                        ShimmerHost(showGradient = false) {
-                            LazyRow(
-                                contentPadding =
-                                    WindowInsets.systemBars
-                                        .only(WindowInsetsSides.Horizontal)
-                                        .asPaddingValues(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp),
-                            ) {
-                                items(5) {
-                                    TextPlaceholder(
-                                        height = 30.dp,
-                                        shape = RoundedCornerShape(16.dp),
-                                        modifier = Modifier.width(72.dp),
-                                    )
-                                }
-                            }
-                        }
-                    }
                 }
 
                 // Show podcast sections FIRST when podcast chip is selected (fixed at top)
@@ -1421,7 +1416,7 @@ fun HomeScreen(
                                             )
                                             Spacer(modifier = Modifier.height(16.dp))
                                             Button(onClick = {
-                                                navController.navigate("wrapped")
+                                                navController.navigate("wrapped_story")
                                             }) {
                                                 Text(stringResource(R.string.open))
                                             }
@@ -2430,47 +2425,6 @@ fun HomeScreen(
                                             ) { item ->
                                                 ytGridItem(item)
                                             }
-                                        }
-                                    }
-                                }
-                            }
-                        }
-
-                        HomeSection.MoodAndGenres -> {
-                            // Skip MoodAndGenres when podcast chip is selected
-                            if (selectedChip?.title?.contains("Podcast", ignoreCase = true) == true) {
-                                return@forEach
-                            }
-                            explorePage?.moodAndGenres?.let { moodAndGenres ->
-                                item(key = "mood_and_genres_title") {
-                                    NavigationTitle(
-                                        title = stringResource(R.string.mood_and_genres),
-                                        onClick = {
-                                            navController.navigate("mood_and_genres")
-                                        },
-                                    )
-                                }
-                                item(key = "mood_and_genres_list") {
-                                    LazyHorizontalGrid(
-                                        rows = GridCells.Fixed(4),
-                                        contentPadding = PaddingValues(6.dp),
-                                        modifier =
-                                            Modifier
-                                                .height((MoodAndGenresButtonHeight + 12.dp) * 4 + 12.dp),
-                                    ) {
-                                        items(moodAndGenres.distinctBy { "${it.title}_${it.endpoint.browseId}_${it.endpoint.params}" }, key = { "${it.title}_${it.endpoint.browseId}_${it.endpoint.params}" }) {
-                                            MoodAndGenresButton(
-                                                title = it.title,
-                                                onClick = {
-                                                    navController.navigate(
-                                                        "youtube_browse/${it.endpoint.browseId}?params=${it.endpoint.params}",
-                                                    )
-                                                },
-                                                modifier =
-                                                    Modifier
-                                                        .padding(6.dp)
-                                                        .width(180.dp),
-                                            )
                                         }
                                     }
                                 }

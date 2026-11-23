@@ -11,7 +11,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.ui.Alignment
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
@@ -67,7 +69,6 @@ import com.vmusic.takeserver.ui.component.ChipsRow
 import com.vmusic.takeserver.ui.component.LibraryArtistGridItem
 import com.vmusic.takeserver.ui.component.LibraryArtistListItem
 import com.vmusic.takeserver.ui.component.LibrarySearchEmptyPlaceholder
-import com.vmusic.takeserver.ui.component.LibrarySearchHeader
 import com.vmusic.takeserver.ui.component.LocalMenuState
 import com.vmusic.takeserver.ui.component.SortHeader
 import com.vmusic.takeserver.utils.rememberEnumPreference
@@ -155,16 +156,11 @@ fun LibraryArtistsScreen(
     }
 
     val headerContent = @Composable {
-        LibrarySearchHeader(
-            isSearchActive = isSearchActive,
-            searchQuery = searchQuery,
-            onSearchQueryChange = viewModel::updateSearchQuery,
-            onBack = {
-                isSearchActive = false
-                viewModel.updateSearchQuery("")
-            },
-            keyboardController = keyboardController,
-            modifier = Modifier.padding(start = 16.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         ) {
             SortHeader(
                 sortType = sortType,
@@ -193,21 +189,13 @@ fun LibraryArtistsScreen(
                 color = MaterialTheme.colorScheme.secondary,
             )
 
-            IconButton(
-                onClick = { isSearchActive = true },
-                modifier = Modifier.padding(start = 8.dp).size(40.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.search),
-                    contentDescription = stringResource(R.string.search),
-                )
-            }
+            Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
                 onClick = {
                     viewType = viewType.toggle()
                 },
-                modifier = Modifier.padding(end = 8.dp).size(40.dp),
+                modifier = Modifier.size(40.dp),
             ) {
                 Icon(
                     painter =

@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -76,7 +77,6 @@ import com.vmusic.takeserver.db.entities.Playlist
 import com.vmusic.takeserver.db.entities.PlaylistEntity
 import com.vmusic.takeserver.ui.component.CreatePlaylistDialog
 import com.vmusic.takeserver.ui.component.LibrarySearchEmptyPlaceholder
-import com.vmusic.takeserver.ui.component.LibrarySearchHeader
 import com.vmusic.takeserver.ui.component.LibraryPlaylistGridItem
 import com.vmusic.takeserver.ui.component.LibraryPlaylistListItem
 import com.vmusic.takeserver.ui.component.LocalMenuState
@@ -329,16 +329,11 @@ fun LibraryPlaylistsScreen(
     }
 
     val headerContent = @Composable {
-        LibrarySearchHeader(
-            isSearchActive = isSearchActive,
-            searchQuery = searchQuery,
-            onSearchQueryChange = viewModel::updateSearchQuery,
-            onBack = {
-                isSearchActive = false
-                viewModel.updateSearchQuery("")
-            },
-            keyboardController = keyboardController,
-            modifier = Modifier.padding(start = 16.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         ) {
             SortHeader(
                 sortType = sortType,
@@ -367,21 +362,13 @@ fun LibraryPlaylistsScreen(
                 color = MaterialTheme.colorScheme.secondary,
             )
 
-            IconButton(
-                onClick = { isSearchActive = true },
-                modifier = Modifier.padding(start = 8.dp).size(40.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.search),
-                    contentDescription = stringResource(R.string.search),
-                )
-            }
+            Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
                 onClick = {
                     onViewTypeChange(viewType.toggle())
                 },
-                modifier = Modifier.padding(end = 8.dp).size(40.dp),
+                modifier = Modifier.size(40.dp),
             ) {
                 Icon(
                     painter =
@@ -411,7 +398,7 @@ fun LibraryPlaylistsScreen(
                     state = lazyListState,
                     contentPadding = LocalPlayerAwareWindowInsets.current.asPaddingValues(),
                 ) {
-                    item(
+                    stickyHeader(
                         key = "filter",
                         contentType = CONTENT_TYPE_HEADER,
                     ) {

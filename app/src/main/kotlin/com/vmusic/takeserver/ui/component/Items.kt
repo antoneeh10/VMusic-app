@@ -1497,7 +1497,7 @@ fun ItemThumbnail(
                 contentDescription = null,
                 contentScale = if (cropAlbumArt) ContentScale.Crop else ContentScale.Fit,
                 modifier = Modifier
-                    .fillMaxWidth()
+                    .fillMaxSize()
                     .clip(shape)
             )
         }
@@ -1576,7 +1576,9 @@ fun LocalThumbnail(
                 .build(),
             contentDescription = null,
             contentScale = if (cropAlbumArt) ContentScale.Crop else ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(shape)
         )
 
         AnimatedVisibility(
@@ -1719,6 +1721,7 @@ fun PlaylistThumbnail(
                     modifier = Modifier
                         .align(alignment)
                         .size(size / 2)
+                        .clip(shape)
                 )
             }
         }

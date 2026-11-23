@@ -176,7 +176,7 @@ internal fun LyricsLine(
             LyricsPosition.RIGHT -> Alignment.End
         }
     }
-    
+
     val agentTextAlign = when {
         respectAgentPositioning && item.agent == "v1" -> TextAlign.Left
         respectAgentPositioning && item.agent == "v2" -> TextAlign.Right
@@ -214,10 +214,10 @@ internal fun LyricsLine(
                         1 -> 0.2f; 2 -> 0.2f; 3 -> 0.15f; 4 -> 0.1f; else -> 0.08f
                     }
                 } else inactiveAlpha
-                
+
                 val animatedAlpha by animateFloatAsState(targetAlpha, tween(250), label = "lyricsLineAlpha")
                 val lineColor = expressiveAccent.copy(alpha = if (item.isBackground) focusedAlpha else animatedAlpha)
-                
+
                 val romanizedTextState by item.romanizedTextFlow.collectAsStateWithLifecycle()
                 val isRomanizedAvailable = romanizedTextState != null
                 val mainTextRaw = if (romanizeAsMain && isRomanizedAvailable) romanizedTextState else item.text
@@ -281,9 +281,9 @@ internal fun LyricsLine(
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
-                
+
                 if (romanizeLyrics && enabledLanguages.isNotEmpty()) {
-                    subText?.let { 
+                    subText?.let {
                         Text(
                             text = it,
                             fontSize = 18.sp,
@@ -294,9 +294,9 @@ internal fun LyricsLine(
                         )
                     }
                 }
-                
+
                 val transText by item.translatedTextFlow.collectAsStateWithLifecycle()
-                transText?.let { 
+                transText?.let {
                     Text(
                         text = it,
                         fontSize = 16.sp,
@@ -345,9 +345,9 @@ private fun WordLevelLyrics(
             isAntiAlias = true
         }
     }
-    
+
     var smoothPosition by remember { mutableLongStateOf(currentPositionState + lyricsOffset) }
-    
+
     LaunchedEffect(isActiveLine) {
         if (isActiveLine) {
             var lastPlayerPos = playerConnection.player.currentPosition
@@ -366,7 +366,7 @@ private fun WordLevelLyrics(
             }
         }
     }
-    
+
     LaunchedEffect(isActiveLine, currentPositionState) {
         if (!isActiveLine) {
             smoothPosition = currentPositionState + lyricsOffset
@@ -376,7 +376,7 @@ private fun WordLevelLyrics(
     val (effectiveWords, effectiveToOriginalIdx) = remember(words, isBackground) {
         words.flatMapIndexed { originalIdx, word ->
             val shouldSplit = word.text.contains('-') && word.text.length > 1 &&
-                (!word.hasTrailingSpace || words.size == 1)
+                    (!word.hasTrailingSpace || words.size == 1)
             if (shouldSplit) {
                 val segments = mutableListOf<String>()
                 var start = 0
@@ -463,7 +463,7 @@ private fun WordLevelLyrics(
                     wordLenMap[clIdx] = wordClusterLen
                 }
                 // Check the cluster at clCursor for a trailing space
-                if (clCursor < clusterCount && clusterCharOffsets[clCursor] == wordEndInMain && 
+                if (clCursor < clusterCount && clusterCharOffsets[clCursor] == wordEndInMain &&
                     wordEndInMain < mainText.length && mainText[wordEndInMain] == ' ') {
                     val spaceClIdx = clCursor
                     wordIdxMap[spaceClIdx] = wordIdx
@@ -507,16 +507,16 @@ private fun WordLevelLyrics(
                 softWrap = true
             )
         }
-        
+
         // Each layout corresponds to one grapheme cluster (the visual unit),
         // not one codepoint. Fixes Devanagari/Bengali matra fragmentation.
         val letterLayouts = remember(mainText, lyricStyle) {
             graphemeClusters.map { cluster -> textMeasurer.measure(cluster, lyricStyle) }
         }
-        
+
         // RTL and joined Indic text is drawn as one shaped line with per-word clips instead of per cluster.
         val drawWholeLine = remember(mainText) { mainText.containsRtl() || mainText.containsJoinedIndic() }
-        
+
         Canvas(modifier = Modifier
             .fillMaxWidth()
             .height(with(density) { layoutResult.size.height.toDp() })
@@ -536,9 +536,9 @@ private fun WordLevelLyrics(
                         val wEndMs = (word.endTime * 1000).toLong()
                         val isWordSung = smoothPosition > wEndMs
                         val isWordActive = smoothPosition in wStartMs..wEndMs
-                        val sungFactor = if (isWordSung) 1f 
-                                        else if (isWordActive) ((smoothPosition - wStartMs).toFloat() / (wEndMs - wStartMs).coerceAtLeast(1)).coerceIn(0f, 1f)
-                                        else 0f
+                        val sungFactor = if (isWordSung) 1f
+                        else if (isWordActive) ((smoothPosition - wStartMs).toFloat() / (wEndMs - wStartMs).coerceAtLeast(1)).coerceIn(0f, 1f)
+                        else 0f
                         Triple(sungFactor, isWordSung, isWordActive)
                     }
 
@@ -546,7 +546,7 @@ private fun WordLevelLyrics(
 
                     effectiveWords.indices.forEach { wIdx ->
                         val (sungFactor, isWordSung, isWordActive) = wordFactors[wIdx]
-                        
+
                         var left = Float.MAX_VALUE
                         var right = Float.MIN_VALUE
                         var top = Float.MAX_VALUE
@@ -586,9 +586,9 @@ private fun WordLevelLyrics(
                     val wEndMs = (word.endTime * 1000).toLong()
                     val isWordSung = smoothPosition > wEndMs
                     val isWordActive = smoothPosition in wStartMs..wEndMs
-                    val sungFactor = if (isWordSung) 1f 
-                                    else if (isWordActive) ((smoothPosition - wStartMs).toFloat() / (wEndMs - wStartMs).coerceAtLeast(1)).coerceIn(0f, 1f)
-                                    else 0f
+                    val sungFactor = if (isWordSung) 1f
+                    else if (isWordActive) ((smoothPosition - wStartMs).toFloat() / (wEndMs - wStartMs).coerceAtLeast(1)).coerceIn(0f, 1f)
+                    else 0f
                     Triple(sungFactor, word, isWordSung)
                 }
 
@@ -605,7 +605,7 @@ private fun WordLevelLyrics(
 
                 val lineCurrentPushes = FloatArray(layoutResult.lineCount)
                 val lineTotalPushes = FloatArray(layoutResult.lineCount)
-                
+
                 // Pre-calculate total pushes per line to handle alignment correctly.
                 // Iterate over cluster indices so each visual glyph unit is one slot.
                 for (i in 0 until clusterCount) {
@@ -613,21 +613,21 @@ private fun WordLevelLyrics(
                     val lineIdx = layoutResult.getLineForOffset(charOffset)
                     val wordIdx = wordIdxMap[i]
                     val originalWordIdx = if (wordIdx != -1) effectiveToOriginalIdx[wordIdx] else -1
-                    
+
                     val (sungFactor, wordItem, isWordSung) = if (wordIdx != -1) wordFactors[wordIdx] else Triple(0f, null, false)
                     val wobble = if (originalWordIdx != -1) wordWobbles[originalWordIdx] else 0f
-                    
+
                     var crescendoDeltaX = 0f
                     val groupWord = if (wordIdx != -1) hyphenGroupData[wordIdx] else null
-                    if (groupWord != null) {
+                    if (groupWord != null && !(wordItem != null && (wordItem.endTime - wordItem.startTime) >= 1.2)) {
                         val p = sungFactor
                         val timeSinceEnd = (smoothPosition - groupWord.groupEndMs).toFloat()
                         val exitDuration = 600f
                         val pOut = (timeSinceEnd / exitDuration).coerceIn(0f, 1f)
-                        val peakScale = 0.06f
+                        val peakScale = 0.015f
                         val decay = 2.5f
                         val freq = 10.0f
-                        val baseScalePerSegment = 0.012f
+                        val baseScalePerSegment = 0.003f
                         if (pOut > 0f) {
                             val baseAtEnd = groupWord.pos * baseScalePerSegment
                             val totalAtEnd = baseAtEnd + peakScale
@@ -652,10 +652,27 @@ private fun WordLevelLyrics(
                     } else 0f
 
                     val nudgeScale = if (wordItem != null && !isWordSung && sungFactor > 0f) {
-                        0.038f * sin(charLp * PI.toFloat()) * exp(-3f * charLp)
+                        0.012f * sin(charLp * PI.toFloat()) * exp(-3f * charLp)
+                    } else 0f
+                    // A single smooth depth pulse travels from the first letter to the last.
+                    // This reads as a forward push, not a repeated jiggle.
+                    val forwardPush = if (wordItem != null && (wordItem.endTime - wordItem.startTime) >= 1.2) {
+                        val startMs = wordItem.startTime * 1000
+                        val endMs = wordItem.endTime * 1000
+                        val durationMs = (endMs - startMs).coerceAtLeast(1.0)
+                        val progress = ((smoothPosition - startMs) / durationMs).toFloat().coerceIn(0f, 1f)
+                        val charCount = wordLenMap[i].coerceAtLeast(1)
+                        val waveCenter = progress * (charCount - 1f).coerceAtLeast(0f)
+                        val distance = kotlin.math.abs(charInWordMap[i].toFloat() - waveCenter)
+                        val pulse = (1f - distance / 1.35f).coerceIn(0f, 1f)
+                        val smoothPulse = pulse * pulse * (3f - 2f * pulse)
+                        smoothPulse * kotlin.math.sin(progress * PI.toFloat()).coerceAtLeast(0f)
                     } else 0f
 
-                    val charScaleX = 1f + (wobble * 0.025f) + crescendoDeltaX + (nudgeScale * 0.3f)
+                    val isLongHeldWord = wordItem != null && (wordItem.endTime - wordItem.startTime) >= 1.2
+                    val stableWobble = if (isLongHeldWord) 0f else wobble
+                    val stableNudge = if (isLongHeldWord) 0f else nudgeScale
+                    val charScaleX = 1f + (stableWobble * 0.025f) + crescendoDeltaX + (stableNudge * 0.3f) + (0.055f * forwardPush)
                     val charBounds = layoutResult.getBoundingBox(charOffset)
                     lineTotalPushes[lineIdx] += charBounds.width * (charScaleX - 1f)
                 }
@@ -668,18 +685,20 @@ private fun WordLevelLyrics(
                     val charBounds = layoutResult.getBoundingBox(charOffset)
                     val wordIdx = wordIdxMap[i]
                     val originalWordIdx = if (wordIdx != -1) effectiveToOriginalIdx[wordIdx] else -1
-                    
+
                     val alignShift = when(alignment) {
                         TextAlign.Center -> -lineTotalPushes[lineIdx] / 2f
                         TextAlign.Right -> -lineTotalPushes[lineIdx]
                         else -> 0f
                     }
-                    
+
                     val (sungFactor, wordItem, isWordSung) = if (wordIdx != -1) wordFactors[wordIdx] else Triple(0f, null, false)
                     val wobble = if (originalWordIdx != -1) wordWobbles[originalWordIdx] else 0f
-                    val wobbleX = wobble * 0.025f
-                    val wobbleY = wobble * 0.015f
-                    
+                    val isLongHeldWord = wordItem != null && (wordItem.endTime - wordItem.startTime) >= 1.2
+                    // Keep sustained words steady; their only motion is the traveling forward pulse.
+                    val wobbleX = if (isLongHeldWord) 0f else wobble * 0.025f
+                    val wobbleY = if (isLongHeldWord) 0f else wobble * 0.015f
+
                     val charLp = if (wordItem != null) {
                         val sMs = wordItem.startTime * 1000
                         val dur = (wordItem.endTime * 1000 - wordItem.startTime * 1000).coerceAtLeast(100.0)
@@ -694,15 +713,15 @@ private fun WordLevelLyrics(
                     var crescendoDeltaX = 0f
                     var crescendoDeltaY = 0f
                     val groupWord = if (wordIdx != -1) hyphenGroupData[wordIdx] else null
-                    if (groupWord != null) {
+                    if (groupWord != null && !(wordItem != null && (wordItem.endTime - wordItem.startTime) >= 1.2)) {
                         val p = sungFactor
                         val timeSinceEnd = (smoothPosition - groupWord.groupEndMs).toFloat()
                         val exitDuration = 600f
                         val pOut = (timeSinceEnd / exitDuration).coerceIn(0f, 1f)
-                        val peakScale = 0.06f
+                        val peakScale = 0.015f
                         val decay = 3.5f
                         val freq = 5.0f
-                        val baseScalePerSegment = 0.012f
+                        val baseScalePerSegment = 0.003f
                         if (pOut > 0f) {
                             val baseAtEnd = groupWord.pos * baseScalePerSegment
                             val totalAtEnd = baseAtEnd + peakScale
@@ -722,13 +741,26 @@ private fun WordLevelLyrics(
                         }
                     }
 
-                    val nudgeStrength = 0.038f
-                    val nudgeScale = if (wordItem != null && !isWordSung && sungFactor > 0f) {
+                    val nudgeStrength = 0.012f
+                    val nudgeScale = if (!isLongHeldWord && wordItem != null && !isWordSung && sungFactor > 0f) {
                         nudgeStrength * sin(charLp * PI.toFloat()) * exp(-3f * charLp)
                     } else 0f
-                    
-                    val charScaleX = 1f + wobbleX + crescendoDeltaX + nudgeScale * 0.3f
-                    val charScaleY = 1f + wobbleY + crescendoDeltaY + nudgeScale
+                    // One soft scale-up pulse moves across the letters during a long-held word.
+                    val forwardPush = if (isLongHeldWord && wordItem != null) {
+                        val startMs = wordItem.startTime * 1000
+                        val endMs = wordItem.endTime * 1000
+                        val durationMs = (endMs - startMs).coerceAtLeast(1.0)
+                        val progress = ((smoothPosition - startMs) / durationMs).toFloat().coerceIn(0f, 1f)
+                        val charCount = wordLenMap[i].coerceAtLeast(1)
+                        val waveCenter = progress * (charCount - 1f).coerceAtLeast(0f)
+                        val distance = kotlin.math.abs(charInWordMap[i].toFloat() - waveCenter)
+                        val pulse = (1f - distance / 1.35f).coerceIn(0f, 1f)
+                        val smoothPulse = pulse * pulse * (3f - 2f * pulse)
+                        smoothPulse * kotlin.math.sin(progress * PI.toFloat()).coerceAtLeast(0f)
+                    } else 0f
+
+                    val charScaleX = 1f + wobbleX + crescendoDeltaX + nudgeScale * 0.3f + (0.055f * forwardPush)
+                    val charScaleY = 1f + wobbleY + crescendoDeltaY + nudgeScale + (0.055f * forwardPush)
 
                     withTransform({
                         var waveOffset = 0f
@@ -740,13 +772,17 @@ private fun WordLevelLyrics(
                             val waveFade = (timeInGroup / 200f).coerceIn(0f, 1f) * (timeToGroupEnd / 200f).coerceIn(0f, 1f)
                             if (waveFade > 0.01f) {
                                 val waveSpeed = 0.006f
-                                val waveHeight = 3.24f
+                                val waveHeight = 0.8f
                                 val phaseOffset = i * 0.4f
                                 waveOffset = sin(wallTime * waveSpeed + phaseOffset) * waveHeight * waveFade
                             }
                         }
 
-                        translate(left = alignShift + lineCurrentPushes[lineIdx] + charBounds.left, top = charBounds.top + waveOffset)
+                        // No vertical bobbing here: the scale pulse itself creates the forward-depth feel.
+                        translate(
+                            left = alignShift + lineCurrentPushes[lineIdx] + charBounds.left,
+                            top = charBounds.top + waveOffset
+                        )
                         if (wordIdx != -1) {
                             scale(
                                 charScaleX,
@@ -765,7 +801,7 @@ private fun WordLevelLyrics(
                             val impactFactor = (((impactRatio - 100f) / 250f).coerceIn(0f, 1f) * 0.6f + ((dur.toFloat() - 300f) / 1500f).coerceIn(0f, 1f) * 0.4f).coerceIn(0f, 1f) * fadeFactor
                             if (impactFactor > 0.01f) {
                                 val glowAlpha = (0.35f * impactFactor).coerceIn(0f, 0.4f)
-                                val baseGlowRadius = 12.dp.toPx() * impactFactor                                                                                    
+                                val baseGlowRadius = 12.dp.toPx() * impactFactor
                                 drawIntoCanvas { canvas ->
                                     glowPaint.maskFilter = BlurMaskFilter(baseGlowRadius, BlurMaskFilter.Blur.NORMAL)
                                     glowPaint.color = expressiveAccent.copy(alpha = glowAlpha).toArgb()

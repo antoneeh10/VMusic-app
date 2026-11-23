@@ -27,7 +27,7 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
@@ -51,8 +51,9 @@ import com.vmusic.takeserver.constants.AndroidAutoTargetPlaylistKey
 import com.vmusic.takeserver.constants.AndroidAutoYouTubePlaylistsKey
 import com.vmusic.takeserver.constants.MediaSessionConstants
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
 import kotlinx.coroutines.flow.map
@@ -151,17 +152,15 @@ fun AndroidAutoSettings(
         }
     }
 
-    Column(
-        modifier = Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    StickySettingsContent(
+        title = stringResource(R.string.android_auto),
+        navController = navController,
     ) {
         // Visible sections
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.android_auto_visible_sections),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = {},
                     description = { Text(stringResource(R.string.android_auto_reorder_hint)) },
                     onClick = null
@@ -178,9 +177,9 @@ fun AndroidAutoSettings(
         ) {
             items(sections, key = { (section, _) -> section.id }) { (section, enabled) ->
                 ReorderableItem(reorderableState, key = section.id) {
-                    Material3SettingsGroup(
+                    ExpressiveSettingsGroup(
                         items = listOf(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 icon = painterResource(
                                     when (section) {
                                         AndroidAutoSection.LIKED -> R.drawable.favorite
@@ -284,10 +283,10 @@ fun AndroidAutoSettings(
             )
         }
         
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.android_auto_target_playlist),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.playlist_add),
                     title = { Text(stringResource(R.string.android_auto_target_playlist)) },
                     description = { Text(playlistLabels(targetPlaylist)) },
@@ -299,10 +298,10 @@ fun AndroidAutoSettings(
         Spacer(Modifier.height(27.dp))
 
         // YouTube playlists
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.mixes),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.queue_music),
                     title = { Text(stringResource(R.string.android_auto_youtube_playlists)) },
                     description = { Text(stringResource(R.string.android_auto_youtube_playlists_desc)) },
@@ -329,10 +328,10 @@ fun AndroidAutoSettings(
         Spacer(Modifier.height(27.dp))
 
         // Search options
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.android_auto_search_options),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.manage_search),
                     title = { Text(stringResource(R.string.android_auto_search_local_songs_limit)) },
                     description = {
@@ -367,18 +366,4 @@ fun AndroidAutoSettings(
         Spacer(Modifier.height(27.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.android_auto)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
+    }

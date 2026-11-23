@@ -34,7 +34,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -90,8 +90,9 @@ import com.vmusic.takeserver.constants.ShowWrappedCardKey
 import com.vmusic.takeserver.constants.TopSize
 import com.vmusic.takeserver.ui.component.EnumDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.component.DraggableLyricsProviderItem
 import com.vmusic.takeserver.ui.component.DraggableLyricsProviderList
 import com.vmusic.takeserver.lyrics.LyricsProviderRegistry
@@ -737,16 +738,14 @@ fun ContentSettings(
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+    StickySettingsContent(
+        title = stringResource(R.string.content),
+        navController = navController,
     ) {
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.general),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.language),
                     title = { Text(stringResource(R.string.content_language)) },
                     description = {
@@ -756,7 +755,7 @@ fun ContentSettings(
                     },
                     onClick = { showContentLanguageDialog = true }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.location_on),
                     title = { Text(stringResource(R.string.content_country)) },
                     description = {
@@ -766,7 +765,7 @@ fun ContentSettings(
                     },
                     onClick = { showContentCountryDialog = true }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.explicit),
                     title = { Text(stringResource(R.string.hide_explicit)) },
                     trailingContent = {
@@ -786,7 +785,7 @@ fun ContentSettings(
                     },
                     onClick = { onHideExplicitChange(!hideExplicit) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.slow_motion_video),
                     title = { Text(stringResource(R.string.hide_video_songs)) },
                     trailingContent = {
@@ -806,7 +805,7 @@ fun ContentSettings(
                     },
                     onClick = { onHideVideoSongsChange(!hideVideoSongs) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.hide_image),
                     title = { Text(stringResource(R.string.hide_youtube_shorts)) },
                     trailingContent = {
@@ -831,10 +830,10 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.playlists),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.playlist_add),
                     title = { Text(stringResource(R.string.add_to_playlist_position)) },
                     description = {
@@ -852,10 +851,10 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.artist_page_settings),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.info),
                     title = { Text(stringResource(R.string.show_artist_description)) },
                     trailingContent = {
@@ -875,7 +874,7 @@ fun ContentSettings(
                     },
                     onClick = { onShowArtistDescriptionChange(!showArtistDescription) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.person),
                     title = { Text(stringResource(R.string.show_artist_subscriber_count)) },
                     trailingContent = {
@@ -895,7 +894,7 @@ fun ContentSettings(
                     },
                     onClick = { onShowArtistSubscriberCountChange(!showArtistSubscriberCount) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.person),
                     title = { Text(stringResource(R.string.show_artist_monthly_listeners)) },
                     trailingContent = {
@@ -920,11 +919,11 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.app_language),
             items = listOf(
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.language),
                         title = { Text(stringResource(R.string.app_language)) },
                         onClick = {
@@ -937,7 +936,7 @@ fun ContentSettings(
                         }
                     )
                 } else {
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.language),
                         title = { Text(stringResource(R.string.app_language)) },
                         description = {
@@ -953,11 +952,11 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.proxy),
             items = buildList {
                 add(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.wifi_proxy),
                         title = { Text(stringResource(R.string.enable_proxy)) },
                         trailingContent = {
@@ -980,7 +979,7 @@ fun ContentSettings(
                 )
                 if (proxyEnabled) {
                     add(
-                        Material3SettingsItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.settings),
                             title = { Text(stringResource(R.string.config_proxy)) },
                             onClick = { showProxyConfigurationDialog = true }
@@ -992,22 +991,22 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.lyrics),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.lyrics),
                     title = { Text(stringResource(R.string.lyrics_provider_selection)) },
                     description = { Text(stringResource(R.string.lyrics_provider_selection_desc)) },
                     onClick = { showProviderSelectionDialog = true }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.lyrics),
                     title = { Text(stringResource(R.string.lyrics_provider_priority)) },
                     description = { Text(stringResource(R.string.lyrics_provider_priority_desc)) },
                     onClick = { showProviderPriorityDialog = true }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.language_korean_latin),
                     title = { Text(stringResource(R.string.lyrics_romanization)) },
                     onClick = { navController.navigate("settings/content/romanization") }
@@ -1017,10 +1016,10 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = "Wrapped",
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.stats),
                     title = { Text(stringResource(R.string.show_most_stats_playlists)) },
                     description = { Text(stringResource(R.string.show_most_stats_playlists_desc)) },
@@ -1041,7 +1040,7 @@ fun ContentSettings(
                     },
                     onClick = { onShowMostStatsPlaylistsChange(!showMostStatsPlaylists) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.trending_up),
                     title = { Text(stringResource(R.string.show_wrapped_card)) },
                     trailingContent = {
@@ -1066,10 +1065,10 @@ fun ContentSettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.misc),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.shuffle),
                     title = { Text(stringResource(R.string.randomize_home_order)) },
                     description = { Text(stringResource(R.string.randomize_home_order_desc)) },
@@ -1090,13 +1089,13 @@ fun ContentSettings(
                     },
                     onClick = { onRandomizeHomeOrderChange(!randomizeHomeOrder) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.trending_up),
                     title = { Text(stringResource(R.string.top_length)) },
                     description = { Text(lengthTop) },
                     onClick = { showTopLengthDialog = true }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.home_outlined),
                     title = { Text(stringResource(R.string.set_quick_picks)) },
                     description = {
@@ -1114,18 +1113,4 @@ fun ContentSettings(
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.content)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }

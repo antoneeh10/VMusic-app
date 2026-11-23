@@ -33,6 +33,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -864,16 +865,19 @@ private fun AutoPlaylistHeader(
                         .size(240.dp)
                         .shadow(
                             elevation = 24.dp,
-                            shape = RoundedCornerShape(3.dp),
+                            shape = RoundedCornerShape(16.dp),
                             spotColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
                         ),
-                shape = RoundedCornerShape(3.dp),
+                shape = RoundedCornerShape(16.dp),
             ) {
                 AsyncImage(
                     model = songs[0].song.thumbnailUrl,
                     contentDescription = null,
                     contentScale = androidx.compose.ui.layout.ContentScale.Crop,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier =
+                        Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(16.dp)),
                 )
             }
         }

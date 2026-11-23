@@ -27,7 +27,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.compose.runtime.getValue
@@ -66,8 +66,9 @@ import com.vmusic.takeserver.LocalPlayerAwareWindowInsets
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
 import com.vmusic.takeserver.ui.component.InfoLabel
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.component.TextFieldDialog
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
@@ -104,17 +105,10 @@ fun ProfileSettings(
     var showLogoutDialog by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
 
-    Column(
-        modifier = Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom))
-            .verticalScroll(rememberScrollState())
-            .padding(16.dp)
+    StickySettingsContent(
+        title = "Profile",
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top)
-            )
-        )
 
         // Logout confirmation dialog
         if (showLogoutDialog) {
@@ -217,9 +211,9 @@ fun ProfileSettings(
             )
         }
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             items = listOfNotNull(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = {
                         Row(verticalAlignment = Alignment.CenterVertically) {
                             if (isLoggedIn && accountImageUrl != null) {
@@ -257,7 +251,7 @@ fun ProfileSettings(
                     }
                 ),
                 if (isLoggedIn) {
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.switch_youtube_channel)) },
                         icon = painterResource(R.drawable.account),
                         onClick = { navController.navigate("switch_channel") },
@@ -268,9 +262,9 @@ fun ProfileSettings(
 
         Spacer(Modifier.height(16.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = {
                         Text(
                             when {
@@ -287,7 +281,7 @@ fun ProfileSettings(
                         else showTokenEditor = true
                     }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.more_content)) },
                     icon = painterResource(R.drawable.cached),
                     trailingContent = {
@@ -309,7 +303,7 @@ fun ProfileSettings(
                     },
                     enabled = isLoggedIn
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.yt_sync)) },
                     icon = painterResource(R.drawable.cached),
                     trailingContent = {
@@ -332,18 +326,4 @@ fun ProfileSettings(
         )
     }
 
-    TopAppBar(
-        title = { Text("Profile") },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }

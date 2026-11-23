@@ -697,7 +697,9 @@ private fun ThumbnailImage(
                 .build(),
             contentDescription = null,
             contentScale = if (cropArtwork) ContentScale.Crop else ContentScale.Fit,
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(ThumbnailCornerRadius))
         )
     }
 }

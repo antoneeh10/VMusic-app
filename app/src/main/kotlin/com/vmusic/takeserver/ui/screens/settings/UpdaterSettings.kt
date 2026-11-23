@@ -5,24 +5,34 @@
 
 package com.vmusic.takeserver.ui.screens.settings
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,19 +41,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.vmusic.takeserver.BuildConfig
 import com.vmusic.takeserver.LocalPlayerAwareWindowInsets
 import com.vmusic.takeserver.R
 import com.vmusic.takeserver.constants.CheckForUpdatesKey
 import com.vmusic.takeserver.constants.UpdateNotificationsEnabledKey
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.Updater
 import com.vmusic.takeserver.utils.rememberPreference
@@ -51,15 +64,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
+private val HeroBlue = Color(0xFF3F51B5)
+
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UpdaterScreen(
-    navController: NavController
+    navController: NavController,
 ) {
     val (checkForUpdates, onCheckForUpdatesChange) = rememberPreference(CheckForUpdatesKey, true)
     val (updateNotifications, onUpdateNotificationsChange) = rememberPreference(UpdateNotificationsEnabledKey, true)
 
-    val context = LocalContext.current
     var isChecking by remember { mutableStateOf(false) }
     var updateAvailable by remember { mutableStateOf(false) }
     var latestVersion by remember { mutableStateOf<String?>(null) }
@@ -91,55 +105,90 @@ fun UpdaterScreen(
         }
     }
 
-    Column(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .windowInsetsPadding(
-                    LocalPlayerAwareWindowInsets.current.only(
-                        WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-                    ),
-                ).verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
+    StickySettingsContent(
+        title = stringResource(R.string.updater),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top,
+
+        Spacer(Modifier.height(40.dp))
+
+        // Current version hero card
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(24.dp),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = HeroBlue,
+                    contentColor = Color.White,
                 ),
-            ),
-        )
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
+        ) {
+            Column(modifier = Modifier.padding(20.dp)) {
+                Text(
+                    text = stringResource(R.string.current_version),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = Color.White.copy(alpha = 0.8f),
+                )
 
-        Spacer(Modifier.height(4.dp))
+                Spacer(modifier = Modifier.height(4.dp))
 
-        Material3SettingsGroup(
-            title = stringResource(R.string.current_version),
-            items =
-                listOf(
-                    Material3SettingsItem(
-                        title = {
-                            Text(stringResource(R.string.version_format, BuildConfig.VERSION_NAME))
-                        },
-                        description = {
-                            val arch = BuildConfig.ARCHITECTURE
-                            val variant = if (BuildConfig.CAST_AVAILABLE) "GMS" else "FOSS"
-                            Text("$arch - $variant")
-                        },
-                    ),
-                ),
-        )
+                Text(
+                    text = BuildConfig.VERSION_NAME,
+                    style =
+                        MaterialTheme.typography.headlineLarge.copy(
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold,
+                        ),
+                    color = Color.White,
+                )
 
-        Spacer(Modifier.height(16.dp))
+                Spacer(modifier = Modifier.height(12.dp))
 
-        Material3SettingsGroup(
-            title = stringResource(R.string.update_settings),
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    VersionChip(text = BuildConfig.ARCHITECTURE.lowercase())
+                    VersionChip(text = if (BuildConfig.CAST_AVAILABLE) "GMS" else "FOSS")
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Surface(
+                    shape = CircleShape,
+                    color = Color.White.copy(alpha = 0.15f),
+                ) {
+                    Row(
+                        modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(6.dp),
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.check),
+                            contentDescription = null,
+                            modifier = Modifier.size(16.dp),
+                        )
+                        Text(
+                            text =
+                                stringResource(
+                                    if (updateAvailable) R.string.update_available_title else R.string.up_to_date,
+                                ),
+                            style = MaterialTheme.typography.labelMedium,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
+            }
+        }
+
+        Spacer(Modifier.height(20.dp))
+
+        ExpressiveSettingsGroup(
+            title = stringResource(R.string.update_settings_section),
             items =
                 buildList {
                     add(
-                        Material3SettingsItem(
-                            title = { Text(stringResource(R.string.check_for_updates)) },
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.update),
+                            title = { Text(stringResource(R.string.check_for_updates)) },
+                            description = { Text(stringResource(R.string.check_for_updates_desc)) },
                             trailingContent = {
                                 Switch(
                                     checked = checkForUpdates,
@@ -152,9 +201,10 @@ fun UpdaterScreen(
 
                     if (checkForUpdates) {
                         add(
-                            Material3SettingsItem(
-                                title = { Text(stringResource(R.string.update_notifications)) },
+                            ExpressiveSettingsItem(
                                 icon = painterResource(R.drawable.notification),
+                                title = { Text(stringResource(R.string.update_notifications)) },
+                                description = { Text(stringResource(R.string.update_notifications_desc)) },
                                 trailingContent = {
                                     Switch(
                                         checked = updateNotifications,
@@ -168,41 +218,43 @@ fun UpdaterScreen(
                 },
         )
 
-        Spacer(Modifier.height(16.dp))
+        Spacer(Modifier.height(20.dp))
 
-        Material3SettingsGroup(
-            title = stringResource(R.string.check_for_updates_title),
-            items =
-                listOf(
-                    Material3SettingsItem(
-                        icon = painterResource(R.drawable.refresh),
-                        title = {
-                            if (isChecking) {
-                                Text(stringResource(R.string.checking_for_updates))
-                            } else if (latestVersion != null) {
-                                Text(stringResource(R.string.latest_version_format, latestVersion!!))
-                            } else {
-                                Text(stringResource(R.string.check_for_updates_button))
-                            }
-                        },
-                        trailingContent = {
-                            if (isChecking) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.padding(end = 16.dp),
-                                    strokeWidth = 2.dp,
-                                )
-                            } else if (updateAvailable) {
-                                Icon(
-                                    painter = painterResource(R.drawable.download),
-                                    contentDescription = stringResource(R.string.update_available_title),
-                                    tint = MaterialTheme.colorScheme.primary,
-                                )
-                            }
-                        },
-                        onClick = { if (!isChecking) performManualCheck() },
-                    ),
+        Button(
+            onClick = { if (!isChecking) performManualCheck() },
+            modifier = Modifier.fillMaxWidth(),
+            shape = CircleShape,
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.primary,
+                    contentColor = MaterialTheme.colorScheme.onPrimary,
                 ),
-        )
+        ) {
+            if (isChecking) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(20.dp),
+                    strokeWidth = 2.dp,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            } else {
+                Icon(
+                    painter = painterResource(R.drawable.check),
+                    contentDescription = null,
+                    modifier = Modifier.size(20.dp),
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+            }
+            Text(
+                text =
+                    if (isChecking) {
+                        stringResource(R.string.checking_for_updates)
+                    } else {
+                        stringResource(R.string.check_again)
+                    },
+                style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.Bold),
+            )
+        }
 
         checkError?.let {
             Spacer(Modifier.height(12.dp))
@@ -218,10 +270,8 @@ fun UpdaterScreen(
             Spacer(Modifier.height(16.dp))
             Button(
                 onClick = { showChangelog = !showChangelog },
-                modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                modifier = Modifier.fillMaxWidth(),
+                shape = CircleShape,
             ) {
                 Text(if (showChangelog) stringResource(R.string.hide_changelog) else stringResource(R.string.view_changelog))
             }
@@ -242,18 +292,19 @@ fun UpdaterScreen(
         Spacer(Modifier.height(32.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.updater)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
+    }
+
+@Composable
+private fun VersionChip(text: String) {
+    Surface(
+        shape = CircleShape,
+        color = Color.White.copy(alpha = 0.15f),
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.Bold),
+            color = Color.White,
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
+        )
+    }
 }

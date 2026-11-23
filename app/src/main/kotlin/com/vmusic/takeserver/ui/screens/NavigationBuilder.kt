@@ -15,6 +15,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarScrollBehavior
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.navigation.NavGraphBuilder
@@ -32,6 +33,9 @@ import com.vmusic.takeserver.ui.screens.artist.ArtistSongsScreen
 import com.vmusic.takeserver.ui.screens.equalizer.EqScreen
 import com.vmusic.takeserver.ui.screens.equalizer.wizard.WizardScreen
 import com.vmusic.takeserver.ui.screens.library.LibraryScreen
+import com.vmusic.takeserver.ui.screens.musicshare.CustomMusicShareScreen
+import com.vmusic.takeserver.ui.screens.musicshare.MusicShareRoute
+import com.vmusic.takeserver.ui.screens.musicshare.ShareSongInfo
 import com.vmusic.takeserver.ui.screens.playlist.AutoPlaylistScreen
 import com.vmusic.takeserver.ui.screens.playlist.CachePlaylistScreen
 import com.vmusic.takeserver.ui.screens.playlist.LocalPlaylistScreen
@@ -65,6 +69,7 @@ import com.vmusic.takeserver.ui.screens.settings.integrations.LastFMSettings
 import com.vmusic.takeserver.ui.screens.settings.integrations.ListenTogetherSettings
 import com.vmusic.takeserver.ui.screens.settings.SpotifyLoginScreen
 import com.vmusic.takeserver.ui.screens.wrapped.WrappedScreen
+import com.vmusic.takeserver.ui.screens.wrapped.story.WrappedStoryScreen
 import com.vmusic.takeserver.utils.rememberEnumPreference
 import com.vmusic.takeserver.utils.rememberPreference
 
@@ -130,6 +135,23 @@ fun NavGraphBuilder.navigationBuilder(
 
     composable("new_release") {
         NewReleaseScreen(navController)
+    }
+
+    composable(
+        route = MusicShareRoute.ROUTE,
+        arguments =
+            listOf(
+                navArgument(MusicShareRoute.ARG) {
+                    type = NavType.StringType
+                },
+            ),
+    ) { entry ->
+        val song = entry.arguments?.getString(MusicShareRoute.ARG)?.let(ShareSongInfo::fromJson)
+        if (song != null) {
+            CustomMusicShareScreen(navController, song, snackbarHostState)
+        } else {
+            LaunchedEffect(Unit) { navController.navigateUp() }
+        }
     }
 
     composable("charts_screen") {
@@ -359,10 +381,6 @@ fun NavGraphBuilder.navigationBuilder(
         ExperimentalSettings(navController)
     }
 
-    composable("settings/experimental/spotify_canvas") {
-        SpotifyCanvasSettings(navController)
-    }
-
     composable("settings/appearance") {
         AppearanceSettings(navController, snackbarHostState)
     }
@@ -411,6 +429,10 @@ fun NavGraphBuilder.navigationBuilder(
         LastFMSettings(navController)
     }
 
+    composable("settings/integrations/spotify_canvas") {
+        SpotifyCanvasSettings(navController)
+    }
+
     composable(route = "settings/integrations/listen_together") {
         ListenTogetherSettings(navController)
     }
@@ -438,6 +460,10 @@ fun NavGraphBuilder.navigationBuilder(
 
     composable("wrapped") {
         WrappedScreen()
+    }
+
+    composable("wrapped_story") {
+        WrappedStoryScreen()
     }
 
     composable("equalizer") {

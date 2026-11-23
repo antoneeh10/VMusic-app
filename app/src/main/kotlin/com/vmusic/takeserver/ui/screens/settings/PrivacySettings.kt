@@ -21,7 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -40,8 +40,9 @@ import com.vmusic.takeserver.constants.PauseListenHistoryKey
 import com.vmusic.takeserver.constants.PauseSearchHistoryKey
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
 
@@ -134,28 +135,15 @@ fun PrivacySettings(
         )
     }
 
-    Column(
-        Modifier
-            .windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
-                )
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    StickySettingsContent(
+        title = stringResource(R.string.privacy),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top
-                )
-            )
-        )
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.listen_history),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.history),
                     title = { Text(stringResource(R.string.pause_listen_history)) },
                     trailingContent = {
@@ -175,7 +163,7 @@ fun PrivacySettings(
                     },
                     onClick = { onPauseListenHistoryChange(!pauseListenHistory) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.delete_history),
                     title = { Text(stringResource(R.string.clear_listen_history)) },
                     onClick = { showClearListenHistoryDialog = true }
@@ -185,10 +173,10 @@ fun PrivacySettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.search_history),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.search_off),
                     title = { Text(stringResource(R.string.pause_search_history)) },
                     trailingContent = {
@@ -208,7 +196,7 @@ fun PrivacySettings(
                     },
                     onClick = { onPauseSearchHistoryChange(!pauseSearchHistory) }
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.clear_all),
                     title = { Text(stringResource(R.string.clear_search_history)) },
                     onClick = { showClearSearchHistoryDialog = true }
@@ -218,10 +206,10 @@ fun PrivacySettings(
 
         Spacer(modifier = Modifier.height(27.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.misc),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.screenshot),
                     title = { Text(stringResource(R.string.disable_screenshot)) },
                     description = { Text(stringResource(R.string.disable_screenshot_desc)) },
@@ -247,18 +235,4 @@ fun PrivacySettings(
         Spacer(modifier = Modifier.height(16.dp))
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.privacy)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }

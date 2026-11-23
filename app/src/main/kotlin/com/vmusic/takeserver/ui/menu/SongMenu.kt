@@ -93,6 +93,8 @@ import com.vmusic.takeserver.ui.component.NewAction
 import com.vmusic.takeserver.ui.component.NewActionGrid
 import com.vmusic.takeserver.ui.component.SongListItem
 import com.vmusic.takeserver.ui.component.TextFieldDialog
+import com.vmusic.takeserver.ui.screens.musicshare.MusicShareRoute
+import com.vmusic.takeserver.ui.screens.musicshare.ShareSongInfo
 import com.vmusic.takeserver.ui.utils.ShowMediaInfo
 import com.vmusic.takeserver.viewmodels.CachePlaylistViewModel
 import kotlinx.coroutines.Dispatchers
@@ -558,6 +560,21 @@ fun SongMenu(
                                         putExtra(Intent.EXTRA_TEXT, "https://music.youtube.com/watch?v=${song.id}")
                                     }
                                 context.startActivity(Intent.createChooser(intent, null))
+                            },
+                        ),
+                        NewAction(
+                            icon = {
+                                Icon(
+                                    painter = painterResource(R.drawable.insert_photo),
+                                    contentDescription = null,
+                                    modifier = Modifier.size(28.dp),
+                                    tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                                )
+                            },
+                            text = stringResource(R.string.custom_music_share),
+                            onClick = {
+                                onDismiss()
+                                navController.navigate(MusicShareRoute.create(ShareSongInfo.from(song)))
                             },
                         ),
                     ),

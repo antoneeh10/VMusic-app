@@ -50,6 +50,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -83,7 +84,6 @@ import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.EmptyPlaceholder
 import com.vmusic.takeserver.ui.component.HideOnScrollFAB
 import com.vmusic.takeserver.ui.component.LibrarySearchEmptyPlaceholder
-import com.vmusic.takeserver.ui.component.LibrarySearchHeader
 import com.vmusic.takeserver.ui.component.LocalMenuState
 import com.vmusic.takeserver.ui.component.SongListItem
 import com.vmusic.takeserver.ui.component.SortHeader
@@ -369,16 +369,11 @@ fun LibrarySongsScreen(
                 key = "header",
                 contentType = CONTENT_TYPE_HEADER,
             ) {
-                LibrarySearchHeader(
-                    isSearchActive = isSearchActive,
-                    searchQuery = searchQuery,
-                    onSearchQueryChange = viewModel::updateSearchQuery,
-                    onBack = {
-                        isSearchActive = false
-                        viewModel.updateSearchQuery("")
-                    },
-                    keyboardController = keyboardController,
-                    modifier = Modifier.padding(start = 16.dp),
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp, vertical = 4.dp),
                 ) {
                     SortHeader(
                         sortType = sortType,
@@ -407,16 +402,6 @@ fun LibrarySongsScreen(
                         style = MaterialTheme.typography.titleSmall,
                         color = MaterialTheme.colorScheme.secondary,
                     )
-
-                    IconButton(
-                        onClick = { isSearchActive = true },
-                        modifier = Modifier.padding(start = 8.dp, end = 8.dp).size(40.dp),
-                    ) {
-                        Icon(
-                            painter = painterResource(R.drawable.search),
-                            contentDescription = stringResource(R.string.search),
-                        )
-                    }
                 }
             }
 

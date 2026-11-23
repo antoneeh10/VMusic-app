@@ -19,7 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.material3.TriStateCheckbox
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
@@ -36,8 +36,9 @@ import com.vmusic.takeserver.constants.LyricsRomanizeAsMainKey
 import com.vmusic.takeserver.constants.LyricsRomanizeCyrillicByLineKey
 import com.vmusic.takeserver.constants.LyricsRomanizeList
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.rememberPreference
 
@@ -95,18 +96,16 @@ fun RomanizationSettings(
         defaultValue = false
     )
 
-    val checkboxesList: MutableList<Material3SettingsItem> = mutableListOf()
+    val checkboxesList: MutableList<ExpressiveSettingsItem> = mutableListOf()
 
-    Column(
-        Modifier
-            .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    StickySettingsContent(
+        title = stringResource(R.string.lyrics_romanize_title),
+        navController = navController,
     ) {
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.options),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.lyrics_romanize_as_main)) },
                     trailingContent = {
                         Switch(
@@ -125,7 +124,7 @@ fun RomanizationSettings(
                     },
                     icon = painterResource(R.drawable.queue_music)
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.line_by_line_option_title)) },
                     trailingContent = {
                         Switch(
@@ -149,7 +148,7 @@ fun RomanizationSettings(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        checkboxesList += Material3SettingsItem(
+        checkboxesList += ExpressiveSettingsItem(
             title = { Text("Play all") },
             trailingContent = {
                 TriStateCheckbox(
@@ -167,7 +166,7 @@ fun RomanizationSettings(
         )
 
         states.forEachIndexed { index, (language, checked) ->
-            checkboxesList += Material3SettingsItem(
+            checkboxesList += ExpressiveSettingsItem(
                 title = { Text(language) },
                 trailingContent = {
                     Checkbox(
@@ -182,24 +181,10 @@ fun RomanizationSettings(
             )
         }
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.content_language),
             items = checkboxesList
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.lyrics_romanize_title)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }

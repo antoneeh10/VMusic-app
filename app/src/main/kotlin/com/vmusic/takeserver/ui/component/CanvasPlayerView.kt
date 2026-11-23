@@ -28,11 +28,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.CompositingStrategy
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.compose.foundation.shape.RoundedCornerShape
+import com.vmusic.takeserver.constants.ThumbnailCornerRadius
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
@@ -172,7 +175,9 @@ fun CanvasPlayerView(
                     .build(),
                 contentDescription = null,
                 contentScale = if (cropArtwork) ContentScale.Crop else ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(ThumbnailCornerRadius))
             )
         }
 
@@ -187,7 +192,9 @@ fun CanvasPlayerView(
                     .build(),
                 contentDescription = null,
                 contentScale = if (cropArtwork) ContentScale.Crop else ContentScale.Fit,
-                modifier = Modifier.fillMaxSize()
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(ThumbnailCornerRadius))
             )
 
             val exoPlayer = remember(context, canvasUrl) {

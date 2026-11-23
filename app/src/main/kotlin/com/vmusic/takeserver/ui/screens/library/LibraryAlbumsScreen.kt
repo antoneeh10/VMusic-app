@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,6 +40,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -71,7 +73,6 @@ import com.vmusic.takeserver.extensions.normalizeForSearch
 import com.vmusic.takeserver.ui.component.ChipsRow
 import com.vmusic.takeserver.ui.component.EmptyPlaceholder
 import com.vmusic.takeserver.ui.component.LibrarySearchEmptyPlaceholder
-import com.vmusic.takeserver.ui.component.LibrarySearchHeader
 import com.vmusic.takeserver.ui.component.LibraryAlbumGridItem
 import com.vmusic.takeserver.ui.component.LibraryAlbumListItem
 import com.vmusic.takeserver.ui.component.LocalMenuState
@@ -177,16 +178,11 @@ fun LibraryAlbumsScreen(
     }
 
     val headerContent = @Composable {
-        LibrarySearchHeader(
-            isSearchActive = isSearchActive,
-            searchQuery = searchQuery,
-            onSearchQueryChange = viewModel::updateSearchQuery,
-            onBack = {
-                isSearchActive = false
-                viewModel.updateSearchQuery("")
-            },
-            keyboardController = keyboardController,
-            modifier = Modifier.padding(start = 16.dp),
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 4.dp),
         ) {
             SortHeader(
                 sortType = sortType,
@@ -214,25 +210,16 @@ fun LibraryAlbumsScreen(
                 color = MaterialTheme.colorScheme.secondary,
             )
 
-            IconButton(
-                onClick = { isSearchActive = true },
-                modifier = Modifier.padding(start = 8.dp).size(40.dp),
-            ) {
-                Icon(
-                    painter = painterResource(R.drawable.search),
-                    contentDescription = stringResource(R.string.search),
-                )
-            }
+            Spacer(modifier = Modifier.width(8.dp))
 
             IconButton(
                 onClick = {
                     viewType = viewType.toggle()
                 },
-                modifier = Modifier.padding(end = 8.dp).size(40.dp),
+                modifier = Modifier.size(40.dp),
             ) {
                 Icon(
-                    painter =
-                    painterResource(
+                    painter = painterResource(
                         when (viewType) {
                             LibraryViewType.LIST -> R.drawable.list
                             LibraryViewType.GRID -> R.drawable.grid_view

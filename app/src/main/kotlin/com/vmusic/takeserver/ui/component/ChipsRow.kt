@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.systemBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
@@ -51,6 +52,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.vmusic.takeserver.R
 import com.vmusic.takeserver.ui.screens.OptionStats
@@ -61,31 +63,41 @@ fun <E> ChipsRow(
     currentValue: E,
     onValueUpdate: (E) -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
 ) {
     Row(
-        modifier =
-        modifier
+        modifier = modifier
             .fillMaxWidth()
             .horizontalScroll(rememberScrollState())
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
-        Spacer(Modifier.width(12.dp))
+        Spacer(Modifier.width(16.dp))
 
         chips.forEach { (value, label) ->
+            val isSelected = currentValue == value
             FilterChip(
-                label = { Text(label) },
-                selected = currentValue == value,
+                label = {
+                    Text(
+                        text = label,
+                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                    )
+                },
+                selected = isSelected,
                 colors = FilterChipDefaults.filterChipColors(
                     containerColor = containerColor,
+                    labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                    selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                    selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 onClick = { onValueUpdate(value) },
-                shape = RoundedCornerShape(16.dp),
+                shape = CircleShape,
                 border = null
             )
 
             Spacer(Modifier.width(8.dp))
         }
+
+        Spacer(Modifier.width(8.dp))
     }
 }
 
@@ -99,7 +111,7 @@ fun <Int> ChoiceChipsRow(
     currentValue: Int,
     onValueUpdate: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
 ) {
     var expandIconDegree by remember { mutableFloatStateOf(0f) }
     val rotationAnimation by animateFloatAsState(
@@ -109,10 +121,9 @@ fun <Int> ChoiceChipsRow(
     )
 
     Row(
-        modifier =
-        modifier
+        modifier = modifier
             .fillMaxWidth()
-            .padding(start = 12.dp)
+            .padding(start = 16.dp)
             .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
     ) {
         var expanded by remember { mutableStateOf(false) }
@@ -125,13 +136,13 @@ fun <Int> ChoiceChipsRow(
                 },
                 label = {
                     Text(
-                        text =
-                        when (selectedOption) {
+                        text = when (selectedOption) {
                             OptionStats.WEEKS -> stringResource(id = R.string.weeks)
                             OptionStats.MONTHS -> stringResource(id = R.string.months)
                             OptionStats.YEARS -> stringResource(id = R.string.years)
                             OptionStats.CONTINUOUS -> stringResource(id = R.string.continuous)
                         },
+                        fontWeight = FontWeight.SemiBold
                     )
                 },
                 trailingIcon = {
@@ -141,7 +152,7 @@ fun <Int> ChoiceChipsRow(
                         modifier = Modifier.graphicsLayer(rotationZ = rotationAnimation),
                     )
                 },
-                shape = RoundedCornerShape(16.dp),
+                shape = CircleShape,
                 border = null,
                 colors = AssistChipDefaults.assistChipColors(
                     containerColor = containerColor,
@@ -182,23 +193,31 @@ fun <Int> ChoiceChipsRow(
             label = "",
         ) {
             Row(
-                modifier =
-                Modifier
+                modifier = Modifier
                     .fillMaxWidth()
                     .horizontalScroll(rememberScrollState())
                     .windowInsetsPadding(WindowInsets.systemBars.only(WindowInsetsSides.Horizontal)),
             ) {
                 chips.forEach { (value, label) ->
                     Spacer(Modifier.width(8.dp))
+                    val isSelected = currentValue == value
 
                     FilterChip(
-                        label = { Text(label) },
-                        selected = currentValue == value,
+                        label = {
+                            Text(
+                                text = label,
+                                fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium
+                            )
+                        },
+                        selected = isSelected,
                         colors = FilterChipDefaults.filterChipColors(
                             containerColor = containerColor,
+                            labelColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            selectedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                            selectedLabelColor = MaterialTheme.colorScheme.onPrimaryContainer
                         ),
                         onClick = { onValueUpdate(value) },
-                        shape = RoundedCornerShape(16.dp),
+                        shape = CircleShape,
                         border = null
                     )
                 }

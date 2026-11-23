@@ -48,6 +48,16 @@
     <!-- Artist about section -->
     <string name="about_artist">About</string>
     <string name="show_more">Show more</string>
+
+    <!-- Expressive Home Redesign strings -->
+    <string name="welcome_back">Welcome back! 👋</string>
+    <string name="quick_calls">Quick calls</string>
+    <string name="cover_and_remix">Covers &amp; remixes</string>
+    <string name="see_all">See all</string>
+    <string name="others">Others</string>
+    <string name="mood_happy">Happy</string>
+    <string name="mood_chill">Chill</string>
+    <string name="mood_energize">Energize</string>
     <string name="show_less">Show less</string>
     <string name="artist_page_settings">Artist page</string>
     <string name="show_artist_description">Show artist description</string>
@@ -1027,4 +1037,181 @@
     <string name="status_disconnected">Disconnected</string>
     <string name="status_connecting">Connecting…</string>
     <string name="status_error">Error</string>
+
+    <!-- Custom Music Share -->
+    <string name="custom_music_share">Custom Music Share</string>
+    <string name="music_share_choose_photo">Choose photo</string>
+    <string name="music_share_change_photo">Change photo</string>
+    <string name="music_share_no_cutout">Background cutout isn\'t available — the full photo is used.</string>
+    <string name="music_share_placement">Music UI placement</string>
+    <string name="music_share_top">Top</string>
+    <string name="music_share_left">Left</string>
+    <string name="music_share_right">Right</string>
+    <string name="music_share_photo_object">Photo object</string>
+    <string name="music_share_music_ui">Music UI</string>
+    <string name="music_share_size">Size</string>
+    <string name="music_share_rotation">Rotation</string>
+    <string name="music_share_opacity">Opacity</string>
+    <string name="music_share_layer">Layering</string>
+    <string name="music_share_music_in_front">Music on top</string>
+    <string name="music_share_photo_in_front">Photo on top</string>
+    <string name="music_share_reset">Reset</string>
+    <string name="music_share_save">Save</string>
+    <string name="music_share_saved">Saved to Pictures/Metrolist</string>
+    <string name="music_share_failed">Failed to create image</string>
+    <string name="music_share_discard_title">Discard changes?</string>
+    <string name="music_share_discard_message">Your photo, position and size adjustments will be lost.</string>
+    <string name="music_share_keep_editing">Keep editing</string>
+    <string name="music_share_discard">Discard</string>
+
+    <!-- Settings Redesign Strings -->
+    <string name="search_settings">Search settings</string>
+    <string name="settings_section_interface">INTERFACE</string>
+    <string name="settings_section_player_and_content">PLAYER &amp; CONTENT</string>
+    <string name="settings_section_android_auto">ANDROID AUTO</string>
+    <string name="settings_section_privacy_security">PRIVACY &amp; SECURITY</string>
+    <string name="settings_section_storage_data">STORAGE &amp; DATA</string>
+    <string name="settings_section_experimental">EXPERIMENTAL FEATURES</string>
+    <string name="settings_section_system_about">SYSTEM &amp; ABOUT</string>
+
+    <string name="settings_profile_title">Profile</string>
+    <string name="settings_profile_desc">Account &amp; sync</string>
+    <string name="settings_profile_login_prompt">Login to sync</string>
+
+    <string name="settings_appearance_title">Appearance</string>
+    <string name="settings_appearance_desc">Theme, dynamic colors, layout</string>
+
+    <string name="settings_integrations_title">Integrations</string>
+    <string name="settings_integrations_desc">Last.fm, Discord, other services</string>
+
+    <string name="settings_player_title">Player and audio</string>
+    <string name="settings_player_desc">Quality, equalizer, crossfade</string>
+
+    <string name="settings_content_title">Content</string>
+    <string name="settings_content_desc">Language, country, content filter</string>
+
+    <string name="settings_ai_lyrics_title">AI lyrics translation</string>
+    <string name="settings_ai_lyrics_desc">Model, target language</string>
+
+    <string name="settings_android_auto_title">Android Auto</string>
+    <string name="settings_android_auto_desc">Display &amp; controls in car</string>
+
+    <string name="settings_privacy_title">Privacy</string>
+    <string name="settings_privacy_desc">Permissions, history, usage data</string>
+
+    <string name="settings_storage_title">Storage</string>
+    <string name="settings_storage_desc">Cache, downloads, memory space</string>
+
+    <string name="settings_backup_restore_title">Backup &amp; restore</string>
+    <string name="settings_backup_restore_desc">Export and import app data</string>
+
+    <string name="settings_experimental_title">Experimental features</string>
+    <string name="settings_experimental_desc">New features under testing</string>
+
+    <string name="settings_default_apps_title">Default apps</string>
+    <string name="settings_default_apps_desc">Default links settings</string>
+
+    <string name="settings_updater_title">Updates</string>
+    <string name="settings_updater_desc">Check latest app version</string>
+
+    <string name="settings_changelog_title">Release notes</string>
+    <string name="settings_changelog_desc">Version change history</string>
+
+    <string name="settings_about_title">About VMusic</string>
+    <string name="settings_about_desc">Version, licenses, developer info</string>
+
+    <!-- About Screen Strings -->
+    <string name="about_title">About</string>
+    <string name="about_vmusic_title">VMusic</string>
+    <string name="about_main_developer_title">Ardian</string>
+    <string name="about_main_developer_subtitle">Lead Developer</string>
+    <string name="about_buy_me_a_coffee">Buy me a coffee!</string>
+    <string name="about_sociabuzz">Sociabuzz</string>
+    <string name="about_collaborators_section">COLLABORATORS</string>
+    <string name="about_collaborator_label">Collaborator</string>
+    <string name="about_acknowledgments_section">ACKNOWLEDGMENTS &amp; CREDITS</string>
+    <string name="about_metrolist_desc">Base open-source YouTube Music client project</string>
+    <string name="about_coil_desc">Image loading library for Kotlin Coroutines</string>
+    <string name="about_media3_desc">Android Media3 audio playback library</string>
+    <string name="about_kizzy_desc">Discord Rich Presence RPC integration</string>
+
+    <!-- Appearance Screen Strings -->
+    <string name="appearance_title">Appearance</string>
+    <string name="appearance_section_theme">THEME</string>
+    <string name="appearance_high_refresh_rate">Enable high refresh rate</string>
+    <string name="appearance_high_refresh_rate_desc">Force display to run at highest supported refresh rate (e.g. 120Hz)</string>
+    <string name="appearance_landscape_scaling">Landscape scaling</string>
+    <string name="appearance_landscape_scaling_desc">Landscape mode display size for larger screens</string>
+    <string name="appearance_dynamic_theme">Enable dynamic theme</string>
+    <string name="appearance_dynamic_theme_desc">Use dynamic theme based on wallpaper colors</string>
+    <string name="appearance_dynamic_icon_color">Dynamic icon colors</string>
+    <string name="appearance_dynamic_icon_color_desc">Use dynamic theme for app icons. When disabled, icons use plain colors.</string>
+    <string name="appearance_theme">Theme</string>
+    <string name="appearance_theme_desc">Customize your app theme</string>
+    <string name="appearance_section_mini_player">MINI PLAYER</string>
+    <string name="appearance_new_mini_player_design">New mini player design</string>
+    <string name="appearance_new_mini_player_design_desc">More modern mini player appearance</string>
+    <string name="lyrics_background_blur_intensity">Lyrics background blur intensity</string>
+
+    <!-- Spotify Canvas Integration -->
+    <string name="spotify_canvas">Spotify Canvas</string>
+    <string name="spotify_canvas_desc">Play Spotify canvas videos as player background</string>
+    <string name="spotify_canvas_token">Spotify token (sp_dc)</string>
+    <string name="spotify_canvas_token_unset">Not set. Tap to enter</string>
+    <string name="spotify_canvas_token_set">Saved. Tap to change</string>
+    <string name="spotify_canvas_token_title">Spotify token (sp_dc)</string>
+    <string name="spotify_canvas_token_label">sp_dc token</string>
+    <string name="spotify_login_in_app">Login in app</string>
+    <string name="spotify_paste">Paste</string>
+    <string name="spotify_open">Open Spotify</string>
+    <string name="spotify_token_help">In-app login retrieves the token automatically. If Google is blocked, use email/code login, or sign in in a browser and paste the sp_dc cookie here.</string>
+
+    <!-- Updater screen -->
+    <string name="up_to_date">Up to date</string>
+    <string name="check_again">Check again</string>
+    <string name="check_for_updates_desc">Check the version every time the app opens</string>
+    <string name="update_notifications_desc">Get notified when a new version is available</string>
+    <string name="update_settings_section">UPDATE SETTINGS</string>
+
+    <!-- VMusic Wrapped story -->
+    <string name="wrapped_story_label">VMusic · VMUSIC AUDIO</string>
+    <string name="wrapped_story_title">Wrapped %d</string>
+    <string name="wrapped_story_intro_sub">tahun kamu, versi kamu. yuk lihat soundtrack hidup kamu sepanjang %d!</string>
+    <string name="wrapped_story_minutes_label">Total waktu dengerin</string>
+    <string name="wrapped_story_minutes_unit">menit</string>
+    <string name="wrapped_story_minutes_sub">setara %.1f hari nonstop tanpa tidur. keren banget sih!</string>
+    <string name="wrapped_story_artist_label">Artis nomor satu</string>
+    <string name="wrapped_story_artist_sub">diputar %d kali. kamu emang gak bisa lepas dari lagu-lagu mereka.</string>
+    <string name="wrapped_story_song_1_label">Lagu terbaik #1 kamu</string>
+    <string name="wrapped_story_song_2_label">Lagu terbaik #2 kamu</string>
+    <string name="wrapped_story_song_sub">%s · %dx diputar</string>
+    <string name="wrapped_story_song_playing">sedang memutar preview nada...</string>
+    <string name="wrapped_story_song_muted">audio dibisukan — tap ikon speaker untuk menyalakan</string>
+    <string name="wrapped_story_top5_label">Top 5 lagu %d</string>
+    <string name="wrapped_story_top5_footer">playlist andalan kamu</string>
+    <string name="wrapped_story_habit_label">Kebiasaan kamu</string>
+    <string name="wrapped_story_habit_night">Si Pemutar Tengah Malam</string>
+    <string name="wrapped_story_habit_morning">Si Pagi Hari</string>
+    <string name="wrapped_story_habit_day">Si Siang Produktif</string>
+    <string name="wrapped_story_habit_evening">Si Sore Santai</string>
+    <string name="wrapped_story_habit_sub">puncak dengerin kamu jam %02d.00. dunia udah tidur, kamu masih asyik muter lagu.</string>
+    <string name="wrapped_story_summary_header">VMusic Wrapped %d</string>
+    <string name="wrapped_story_summary_title">2 Lagu Terbaik %d</string>
+    <string name="wrapped_story_summary_songs">%s &amp; %s</string>
+    <string name="wrapped_story_top_artists">Top Artis</string>
+    <string name="wrapped_story_top_songs">Top Lagu</string>
+    <string name="wrapped_story_minutes_stat">menit dengerin</string>
+    <string name="wrapped_story_genre_stat">genre utama</string>
+    <string name="wrapped_story_share">Bagikan Kartu</string>
+    <string name="wrapped_story_again">Ulang</string>
+    <string name="wrapped_story_empty">Dengerin lebih banyak lagu dulu ya, biar Wrapped kamu seru!</string>
+    <string name="wrapped_story_single_song">Lagu terbaik #2 belum ada — baru satu lagu yang paling sering kamu putar.</string>
+    <string name="wrapped_story_genre_fallback">Indie Pop</string>
+    <string name="wrapped_story_rank">%d. %s</string>
+    <string name="wrapped_story_share_label">Bagikan Wr kamu</string>
+    <string name="wrapped_story_paused">Dijeda — tahan lagi untuk lanjut</string>
+    <string name="wrapped_story_settings_title">VMusic Wrapped</string>
+    <string name="wrapped_story_settings_desc">Lihat rangkuman mendengarmu tahun ini</string>
+    <string name="welcome_back_wrapped">Welcome back! 👋 Your Wrapped is here 🎉</string>
+    <string name="wrapped_story_handle">vmusic.takeserver.web.id</string>
 </resources>

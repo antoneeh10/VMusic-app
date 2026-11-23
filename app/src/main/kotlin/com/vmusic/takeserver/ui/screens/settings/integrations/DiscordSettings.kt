@@ -44,7 +44,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -101,8 +101,9 @@ import com.vmusic.takeserver.discord.DiscordTemplateRenderer
 import com.vmusic.takeserver.ui.component.EnumDialog
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.dataStore
 import com.vmusic.takeserver.utils.makeTimeString
@@ -233,21 +234,10 @@ fun DiscordSettings(
         DiscordRpcManager.notifySettingsChanged()
     }
 
-    Column(
-        modifier =
-            Modifier
-                .windowInsetsPadding(
-                    LocalPlayerAwareWindowInsets.current.only(
-                        WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom,
-                    ),
-                ).verticalScroll(rememberScrollState())
-                .padding(horizontal = 16.dp),
+    StickySettingsContent(
+        title = stringResource(R.string.discord_integration),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(WindowInsetsSides.Top),
-            ),
-        )
 
         AnimatedVisibility(visible = !infoDismissed) {
             Card(
@@ -490,11 +480,11 @@ fun DiscordSettings(
             }
         }
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.options),
             items =
                 listOf(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.enable_discord_rpc)) },
                         trailingContent = {
                             Switch(
@@ -515,7 +505,7 @@ fun DiscordSettings(
                         enabled = isLoggedIn,
                         onClick = { if (isLoggedIn) onDiscordRPCChange(!discordRPC) },
                     ),
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         title = { Text(stringResource(R.string.discord_advanced_mode)) },
                         description = { Text(stringResource(R.string.discord_advanced_mode_description)) },
                         trailingContent = {
@@ -556,26 +546,26 @@ fun DiscordSettings(
             Column {
                 Spacer(Modifier.height(8.dp))
 
-                Material3SettingsGroup(
+                ExpressiveSettingsGroup(
                     title = stringResource(R.string.discord_presence),
                     items =
                         listOf(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 title = { Text(stringResource(R.string.discord_activity_type)) },
                                 description = { Text(activityTypeLabel) },
                                 onClick = { showActivityTypeDialog = true },
                             ),
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 title = { Text(stringResource(R.string.discord_activity_name)) },
                                 description = { Text(activityName.ifEmpty { "(default)" }) },
                                 onClick = { showActivityNameDialog = true },
                             ),
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 title = { Text(stringResource(R.string.discord_state)) },
                                 description = { Text(stateTemplate) },
                                 onClick = { showStateDialog = true },
                             ),
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 title = { Text(stringResource(R.string.discord_details)) },
                                 description = { Text(detailsTemplate) },
                                 onClick = { showDetailsDialog = true },
@@ -585,12 +575,12 @@ fun DiscordSettings(
 
                 Spacer(Modifier.height(8.dp))
 
-                Material3SettingsGroup(
+                ExpressiveSettingsGroup(
                     title = stringResource(R.string.discord_buttons),
                     items =
                         buildList {
                             add(
-                                Material3SettingsItem(
+                                ExpressiveSettingsItem(
                                     title = { Text(stringResource(R.string.discord_enable_button_1)) },
                                     trailingContent = {
                                         Switch(
@@ -618,14 +608,14 @@ fun DiscordSettings(
                             )
                             if (btn1Enabled) {
                                 add(
-                                    Material3SettingsItem(
+                                    ExpressiveSettingsItem(
                                         title = { Text("${stringResource(R.string.discord_button_1)} — ${stringResource(R.string.discord_button_label)}") },
                                         description = { Text(btn1Label) },
                                         onClick = { showBtn1LabelDialog = true },
                                     ),
                                 )
                                 add(
-                                    Material3SettingsItem(
+                                    ExpressiveSettingsItem(
                                         title = { Text("${stringResource(R.string.discord_button_1)} — ${stringResource(R.string.discord_button_url)}") },
                                         description = { Text(btn1Url) },
                                         onClick = { showBtn1UrlDialog = true },
@@ -633,7 +623,7 @@ fun DiscordSettings(
                                 )
                             }
                             add(
-                                Material3SettingsItem(
+                                ExpressiveSettingsItem(
                                     title = { Text(stringResource(R.string.discord_enable_button_2)) },
                                     trailingContent = {
                                         Switch(
@@ -661,14 +651,14 @@ fun DiscordSettings(
                             )
                             if (btn2Enabled) {
                                 add(
-                                    Material3SettingsItem(
+                                    ExpressiveSettingsItem(
                                         title = { Text("${stringResource(R.string.discord_button_2)} — ${stringResource(R.string.discord_button_label)}") },
                                         description = { Text(btn2Label) },
                                         onClick = { showBtn2LabelDialog = true },
                                     ),
                                 )
                                 add(
-                                    Material3SettingsItem(
+                                    ExpressiveSettingsItem(
                                         title = { Text("${stringResource(R.string.discord_button_2)} — ${stringResource(R.string.discord_button_url)}") },
                                         description = { Text(btn2Url) },
                                         onClick = { showBtn2UrlDialog = true },
@@ -680,11 +670,11 @@ fun DiscordSettings(
 
                 Spacer(Modifier.height(8.dp))
 
-                Material3SettingsGroup(
+                ExpressiveSettingsGroup(
                     title = stringResource(R.string.discord_status),
                     items =
                         listOf(
-                            Material3SettingsItem(
+                            ExpressiveSettingsItem(
                                 title = { Text(stringResource(R.string.discord_status)) },
                                 description = { Text(userStatusLabel) },
                                 onClick = { showUserStatusDialog = true },
@@ -877,21 +867,7 @@ fun DiscordSettings(
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.discord_integration)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        },
-    )
-}
+    }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

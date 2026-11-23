@@ -179,6 +179,8 @@ import com.vmusic.takeserver.ui.component.BottomSheet
 import com.vmusic.takeserver.ui.component.BottomSheetState
 import com.vmusic.takeserver.ui.component.LocalBottomSheetPageState
 import com.vmusic.takeserver.ui.component.LocalMenuState
+import com.vmusic.takeserver.ui.screens.musicshare.MusicShareRoute
+import com.vmusic.takeserver.ui.screens.musicshare.ShareSongInfo
 import com.vmusic.takeserver.ui.component.Lyrics
 import com.vmusic.takeserver.ui.component.PlayerSliderTrack
 import com.vmusic.takeserver.ui.component.ResizableIconButton
@@ -1286,6 +1288,28 @@ fun BottomSheetPlayer(
                                     )
                                 }
                             }
+                        }
+
+                        FilledIconButton(
+                            onClick = {
+                                state.collapseSoft()
+                                navController.navigate(
+                                    MusicShareRoute.create(ShareSongInfo.from(mediaMetadata)),
+                                )
+                            },
+                            shape = middleShape,
+                            colors =
+                                IconButtonDefaults.filledIconButtonColors(
+                                    containerColor = textButtonColor,
+                                    contentColor = iconButtonColor,
+                                ),
+                            modifier = Modifier.size(42.dp),
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.insert_photo),
+                                contentDescription = stringResource(R.string.custom_music_share),
+                                modifier = Modifier.size(24.dp),
+                            )
                         }
 
                         AnimatedContent(targetState = showInlineLyrics, label = "LikeButton") { showLyrics ->

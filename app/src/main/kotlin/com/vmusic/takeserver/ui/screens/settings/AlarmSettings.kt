@@ -58,8 +58,8 @@ import com.vmusic.takeserver.playback.alarm.MusicAlarmEntry
 import com.vmusic.takeserver.playback.alarm.MusicAlarmScheduler
 import com.vmusic.takeserver.playback.alarm.MusicAlarmStore
 import com.vmusic.takeserver.ui.component.DefaultDialog
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
@@ -100,7 +100,7 @@ fun AlarmSettingsSection(showTitle: Boolean = true) {
     val systemItems = buildList {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !canScheduleExact) {
             add(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.warning),
                     title = { Text(stringResource(R.string.alarm_exact_permission_title)) },
                     description = { Text(stringResource(R.string.alarm_exact_permission_desc)) },
@@ -117,7 +117,7 @@ fun AlarmSettingsSection(showTitle: Boolean = true) {
         }
         if (!ignoringBatteryOptimization) {
             add(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.warning),
                     title = { Text(stringResource(R.string.alarm_battery_optimization_title)) },
                     description = { Text(stringResource(R.string.alarm_battery_optimization_desc)) },
@@ -174,11 +174,11 @@ fun AlarmSettingsSection(showTitle: Boolean = true) {
         )
     }
 
-    Material3SettingsGroup(
+    ExpressiveSettingsGroup(
         title = if (showTitle) stringResource(R.string.alarm) else null,
         items = buildList {
             add(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     icon = painterResource(R.drawable.add_circle),
                     title = { Text(stringResource(R.string.alarm_add)) },
                     onClick = {
@@ -190,7 +190,7 @@ fun AlarmSettingsSection(showTitle: Boolean = true) {
 
             if (alarms.isEmpty()) {
                 add(
-                    Material3SettingsItem(
+                    ExpressiveSettingsItem(
                         icon = painterResource(R.drawable.bedtime),
                         title = { Text(stringResource(R.string.alarm_empty)) }
                     )
@@ -219,7 +219,7 @@ fun AlarmSettingsSection(showTitle: Boolean = true) {
                             append(stringResource(R.string.alarm_next_prefix, triggerText))
                         }
 
-                        Material3SettingsItem(
+                        ExpressiveSettingsItem(
                             icon = painterResource(R.drawable.bedtime),
                             title = {
                                 Text(

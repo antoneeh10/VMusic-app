@@ -12,6 +12,8 @@ import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.compose.animation.core.Animatable
+import androidx.compose.animation.core.tween
 import com.vmusic.takeserver.R
 import com.vmusic.takeserver.constants.AudioQuality
 import com.vmusic.takeserver.utils.InnerTubeXPlayer
@@ -69,7 +71,10 @@ class WrappedAudioService(
         }
     }
 
-    fun playTrack(songId: String?) {
+    fun playTrack(
+        songId: String?,
+        startMs: Long? = null,
+    ) {
         if (player?.currentMediaItem?.mediaId == songId) {
             Timber.tag("WrappedAudioService").d("Track $songId is already loaded or playing.")
             if (player?.isPlaying == false) player?.play()
@@ -81,13 +86,19 @@ class WrappedAudioService(
             try {
                 prepareTrack(songId)
                 withContext(Dispatchers.Main) {
-                    if (songId != null && songId != "2-p9DM2Xvsc") {
-                        player?.seekTo(30_000)
-                    } else {
-                        player?.seekTo(0)
-                    }
+                    val start = startMs ?: if (songId != null && songId != "2-p9DM2Xvsc") 30_000L else 0L
+                    val target = if (_isMuted.value) 0f else 1f
+                    player?.seekTo(start)
+                    player?.volume = target
                     player?.play()
-                    player?.volume = if (_isMuted.value) 0f else 1f
+                    try {
+                        Animatable(0f).animateTo(target, tween(500)) {
+                            player?.volume = this.value
+                        }
+                    } finally {
+                        // Pastikan volume akhir selalu benar walau animasi dibatalkan.
+                        player?.volume = if (_isMuted.value) 0f else 1f
+                    }
                 }
             } catch (e: Exception) {
                 Timber.tag("WrappedAudioService").e(e, "Error during playback preparation")
@@ -133,6 +144,7 @@ class WrappedAudioService(
     }
 
     fun resume() {
+        player?.volume = if (_isMuted.value) 0f else 1f
         player?.play()
     }
 

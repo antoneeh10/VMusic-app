@@ -31,7 +31,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
+import com.vmusic.takeserver.ui.component.ExpressiveTopAppBar as TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -64,8 +64,9 @@ import com.vmusic.takeserver.constants.ScrobbleDelaySecondsKey
 import com.vmusic.takeserver.constants.ScrobbleMinSongDurationKey
 import com.vmusic.takeserver.ui.component.DefaultDialog
 import com.vmusic.takeserver.ui.component.IconButton
-import com.vmusic.takeserver.ui.component.Material3SettingsGroup
-import com.vmusic.takeserver.ui.component.Material3SettingsItem
+import com.vmusic.takeserver.ui.component.StickySettingsContent
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsGroup
+import com.vmusic.takeserver.ui.component.ExpressiveSettingsItem
 import com.vmusic.takeserver.ui.utils.backToMain
 import com.vmusic.takeserver.utils.makeTimeString
 import com.vmusic.takeserver.utils.rememberPreference
@@ -271,29 +272,16 @@ fun LastFMSettings(
         )
     }
 
-    Column(
-        modifier = Modifier
-            .windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Horizontal + WindowInsetsSides.Bottom
-                )
-            )
-            .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+    StickySettingsContent(
+        title = stringResource(R.string.lastfm_integration),
+        navController = navController,
     ) {
-        Spacer(
-            Modifier.windowInsetsPadding(
-                LocalPlayerAwareWindowInsets.current.only(
-                    WindowInsetsSides.Top
-                )
-            )
-        )
 
         // Options section (card-based)
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.account),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = {
                         Text(
                             text = if (isLoggedIn) lastfmUsername else stringResource(R.string.not_logged_in),
@@ -321,10 +309,10 @@ fun LastFMSettings(
 
         Spacer(Modifier.height(8.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.options),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.enable_scrobbling)) },
                     trailingContent = {
                         Switch(
@@ -345,7 +333,7 @@ fun LastFMSettings(
                     enabled = isLoggedIn,
                     icon = painterResource(R.drawable.queue_music)
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.lastfm_now_playing)) },
                     trailingContent = {
                         Switch(
@@ -366,7 +354,7 @@ fun LastFMSettings(
                     enabled = isLoggedIn && lastfmScrobbling,
                     icon = painterResource(R.drawable.play)
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.last_fm_send_likes)) },
                     description = { stringResource(R.string.last_fm_send_likes_description) },
                     trailingContent = {
@@ -588,22 +576,22 @@ fun LastFMSettings(
 
         Spacer(Modifier.height(8.dp))
 
-        Material3SettingsGroup(
+        ExpressiveSettingsGroup(
             title = stringResource(R.string.scrobbling_configuration),
             items = listOf(
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.scrobble_min_track_duration)) },
                     description = { Text(makeTimeString((minTrackDuration * 1000).toLong())) },
                     onClick = { showMinTrackDurationDialog = true },
                     icon = painterResource(R.drawable.timer)
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.scrobble_delay_percent)) },
                     description = { Text(stringResource(R.string.sensitivity_percentage, (scrobbleDelayPercent * 100).roundToInt())) },
                     onClick = { showScrobbleDelayPercentDialog = true },
                     icon = painterResource(R.drawable.timer)
                 ),
-                Material3SettingsItem(
+                ExpressiveSettingsItem(
                     title = { Text(stringResource(R.string.scrobble_delay_minutes)) },
                     description = { Text(makeTimeString((scrobbleDelaySeconds * 1000).toLong())) },
                     onClick = { showScrobbleDelaySecondsDialog = true },
@@ -613,18 +601,4 @@ fun LastFMSettings(
         )
     }
 
-    TopAppBar(
-        title = { Text(stringResource(R.string.lastfm_integration)) },
-        navigationIcon = {
-            IconButton(
-                onClick = navController::navigateUp,
-                onLongClick = navController::backToMain,
-            ) {
-                Icon(
-                    painterResource(R.drawable.arrow_back),
-                    contentDescription = null,
-                )
-            }
-        }
-    )
-}
+    }
