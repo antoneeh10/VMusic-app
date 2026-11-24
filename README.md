@@ -14,7 +14,7 @@ A community-driven YouTube Music client for Android, built around a refined list
 
 <br/>
 
-[**Download**](#download) · [**Features**](#features) · [**Screenshots**](#screenshots) · [**Credits**](#credits) · [**Contributors**](#contributors) · [**Disclaimer**](#disclaimer) · [**Support**](https://support.takeserver.web.id/articles?product=vmusic)
+[**Download**](#download) · [**Features**](#features) · [**Screenshots**](#screenshots) · [**Credits**](#credits) · [**Contributors**](#contributors) · [**Disclaimer**](#disclaimer) · [**Support**](https://support.takeserver.web.id/support)
 
 </div>
 
